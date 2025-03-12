@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberService { // 회원가입 및 회원 관련 작업을 담당
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;

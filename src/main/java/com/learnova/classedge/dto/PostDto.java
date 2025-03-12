@@ -26,5 +26,8 @@ public class PostDto {
 
     private LocalDateTime regDate;
 
+    private LocalDateTime lmiDate;
+
+    private String boardName;
 
 }

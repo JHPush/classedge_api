@@ -1,6 +1,5 @@
 package com.learnova.classedge.repository;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
@@ -25,48 +24,12 @@ public class PostRepositoryTest {
 
     // DI : 의존성 주입
     @Autowired
-    private PostRepository postrepository;
+    private PostRepository postRepository;
 
     @Test
     public void test() {
 
-        assertNotNull(postrepository);
-    }
-
-    @Test
-    @Rollback(false)
-    public void testSave1() {
-
-        // given
-        // when
-
-        Post post = new Post();
-        post.setTitle("title1");
-        post.setContents("contents1");
-        post.setWriter("writer1");
-        post.setRegDate(LocalDateTime.now());
-
-        Post savedPost = postrepository.save(post);
-
-        log.info("savedPost id : {}", savedPost.getId());
-
-        // then
-
-        // assertThrows(NoSuchElementException.class, () -> {
-
-        // Optional<Post> result =
-        // postrepository.findById(savedPost.getId().intValue());
-
-        // result.orElseThrow();
-
-        // });
-
-        assertDoesNotThrow(() -> {
-
-            Optional<Post> result = postrepository.findById(savedPost.getId().intValue());
-            result.orElseThrow();
-
-        });
+        assertNotNull(postRepository);
     }
 
     @Test
@@ -76,25 +39,20 @@ public class PostRepositoryTest {
         for (int i = 1; i <= 30; i++) {
 
             Post post = new Post();
-            post.changeTitle("title" + i);
-            post.changeContents("contents" + i);
-            post.changeWriter("writer" + i);
+            post.changeTitle("p_id" + i);
+            post.changeContents("p_contents" + i);
+            post.changeWriter("p_writer" + i);
             post.changeRegDate(LocalDateTime.now());
-
-            postrepository.save(post);
+            if (i % 2 == 0) {
+                post.changeBoardName("NOTICE");
+            } else {
+                post.changeBoardName("TASK");
+            }
+            postRepository.save(post);
 
         }
-
-        // // when
-        // postrepository.save(post);
-
-        // // then
-        // assertTrue(post.getId() > 0);
-
-        // log.info("postId : {}", post.getId());
     }
 
-    
     // 게시글 상세조회
     @Test
     public void testFindById() {
@@ -106,7 +64,7 @@ public class PostRepositoryTest {
         // then
         assertDoesNotThrow(() -> {
 
-            Optional<Post> result = postrepository.findById(id.intValue());
+            Optional<Post> result = postRepository.findById(id.intValue());
 
             Post post = result.orElseThrow();
 

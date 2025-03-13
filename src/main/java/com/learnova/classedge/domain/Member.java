@@ -16,13 +16,16 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "Member")
+@Getter @Setter
 @Entity
 public class Member implements UserDetails {
 
@@ -106,5 +109,5 @@ public class Member implements UserDetails {
         // 탈퇴 여부에 따라 활성화 여부 결정
         return isWithdraw;
     }
-    
-}
+}    
+

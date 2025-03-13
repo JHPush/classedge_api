@@ -1,6 +1,8 @@
 package com.learnova.classedge.dto;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -13,7 +15,6 @@ import lombok.Setter;
 
 @Getter @Setter
 public class MemberDto extends User {
-
     private String email;
     private String id;
     private String memberName;
@@ -23,23 +24,33 @@ public class MemberDto extends User {
     private String nickname;
     private LoginType loginType;
 
+    public MemberDto(String email, String id, String memberName
+                    , String password, Boolean isWithdraw, MemberRole role
+                    , String nickname, LoginType loginType){
+        super(email, password, Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+role.name())));
 
-    public MemberDto(String email, String id, String memberName, String password, Boolean isWithdraw, MemberRole role, String nickname, LoginType loginType) {
-
-        // MemberDto가 스프링 시큐리티의 User 클래스를 상속 받기 때문에, 부모 클래스인 User의 생성자를 호출해 초기화하는 과정  
-        super(email, password, Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name())));
-
-        // MemberDto의 필드를 직접 초기화하는 과정
         this.email = email;
         this.id = id;
         this.memberName = memberName;
-        this.password = password;
+        this.password =password;
         this.isWithdraw = isWithdraw;
         this.role = role;
         this.nickname = nickname;
         this.loginType = loginType;
-
     }
-
-
+    public Map<String, Object> getClaims(){
+        Map<String, Object> claims = new HashMap<>();
+        
+        claims.put("email", email);
+        claims.put("email", id);
+        claims.put("email", memberName);
+        claims.put("email", password);
+        claims.put("email", isWithdraw);
+        claims.put("email", role);
+        claims.put("email", nickname);
+        claims.put("email", loginType);
+        
+        return claims;
+    }
+    
 }

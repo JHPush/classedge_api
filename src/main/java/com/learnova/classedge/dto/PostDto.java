@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,5 +28,4 @@ public class PostDto {
     private LocalDateTime lmiDate;
 
     private String boardName;
-
 }

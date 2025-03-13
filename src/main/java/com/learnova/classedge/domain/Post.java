@@ -54,7 +54,7 @@ public class Post {
         this.regDate = this.regDate == null ? LocalDateTime.now() : this.regDate;
     }
 
-    // 비즈니스 메소드  ,업데이트용도로 사용 (수정)
+    // 비즈니스 메소드  ,업데이트 용도로 사용 (수정)  (테스트코드 포함)
 
     public void changeId(Long id) {
         this.id = id;
@@ -83,6 +83,4 @@ public class Post {
     public void changeBoardName(String boardName) {
         this.boardName = boardName;
     }
-
-
 }

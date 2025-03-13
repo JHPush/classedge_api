@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.dto.MemberDto;
-import com.learnova.classedge.repository.MemberRepository;
+import com.learnova.classedge.repository.MemberManagementRepository;
 
 import lombok.RequiredArgsConstructor;
 
 
 @Service
 @RequiredArgsConstructor
-public class MemberService { // 회원가입 및 회원 관련 작업을 담당
+public class MemberSignUpService { // 회원가입 및 회원 관련 작업을 담당
 
-    private final MemberRepository memberRepository;
+    private final MemberManagementRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
     public Member registerMember(MemberDto memberDto){
@@ -33,6 +33,5 @@ public class MemberService { // 회원가입 및 회원 관련 작업을 담당
     
         return memberRepository.save(member);
     }
-
 
 }

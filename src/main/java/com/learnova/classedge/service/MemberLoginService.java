@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.dto.MemberDto;
-import com.learnova.classedge.repository.MemberLoginRepository;
+import com.learnova.classedge.repository.MemberManagementRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberLoginService implements UserDetailsService {
 
-    private final MemberLoginRepository memberLoginRepository;
+    private final MemberManagementRepository memberLoginRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

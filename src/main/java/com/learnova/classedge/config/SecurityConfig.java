@@ -29,33 +29,42 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+        
+        // CORS 설정
         http.cors((conf)->{
             conf.configurationSource(corsConfigurationSource());
         });
+        // CSRF 비활성화
         http.csrf(conf->{conf.disable();});
         
         // 세션 비활성 - 사용자 정보를 서버에서 관리하지 않도록 (쿠키로 관리)
         http.sessionManagement(conf->{
             conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         });
+        // 로그인 설정
         http.formLogin(conf->{
             conf.loginPage("/api/v1/login/go"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
             conf.successHandler(new ApiLoginSuccessHandler());
             conf.failureHandler(new ApiLoginFailureHandler());
         });
 
+        // JWT 필터 추가(로그인 후 요청에서 JWT를 확인하는 필터)
         http.addFilterBefore(new JwtCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+        // 예외 처리 설정(권한이 없으면 처리할 핸들러 설정)
         http.exceptionHandling(conf->{
             conf.accessDeniedHandler(new DetailAccessDeniedHandler());
         });
 
+        // SecurityFilterChain 객체 반환
         return http.build();
     }
 
+    // 비밀번호 암호화 설정
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();

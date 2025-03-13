@@ -1,7 +1,7 @@
 package com.learnova.classedge.controller;
 
 import com.learnova.classedge.dto.MemberDto;
-import com.learnova.classedge.service.MemberService;
+import com.learnova.classedge.service.MemberSignUpService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/members")
-public class MemberApiController {
+public class MemberSignUpController {
 
-    private final MemberService memberService;
+    private final MemberSignUpService memberService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signupMember(@RequestBody MemberDto memberDto) {

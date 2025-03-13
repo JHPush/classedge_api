@@ -107,7 +107,7 @@ public class Member implements UserDetails {
     @Override
     public boolean isEnabled() {
         // 탈퇴 여부에 따라 활성화 여부 결정
-        return isWithdraw;
+        return !isWithdraw;
     }
 }    
 

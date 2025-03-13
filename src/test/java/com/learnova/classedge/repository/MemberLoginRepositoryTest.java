@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional()
 public class MemberLoginRepositoryTest {
     @Autowired
-    private MemberLoginRepository memberLoginRepository;
+    private MemberManagementRepository memberLoginRepository;
     
     @Test
     @Rollback(false)

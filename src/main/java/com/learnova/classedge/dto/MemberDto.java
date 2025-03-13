@@ -1,18 +1,19 @@
 package com.learnova.classedge.dto;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import com.learnova.classedge.domain.LoginType;
 import com.learnova.classedge.domain.MemberRole;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class MemberDto extends User {
     private String email;
     private String id;

@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -38,7 +39,7 @@ public class SecurityConfig {
             conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         });
         http.formLogin(conf->{
-            conf.loginPage("/api/v1/login"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
+            conf.loginPage("/api/v1/login/go"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
             conf.successHandler(new ApiLoginSuccessHandler());
             conf.failureHandler(new ApiLoginFailureHandler());
         });

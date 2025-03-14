@@ -34,7 +34,7 @@ public class PostController {
     private final PostService postService;
 
   
-    // 게시글 목록조회 - 카테고리 별 http://localhost:8080/api/v1/posts/list?boardName=notice or task
+    // 게시글 목록조회 - 카테고리 별 http://localhost:8080/api/v1/posts?boardName=notice or task
     @GetMapping("/posts")
     public ResponseEntity<PostDto> getPostBoard(@RequestParam("boardName") String boardName) {
         log.info("boardName : {}", boardName);
@@ -42,7 +42,7 @@ public class PostController {
         return new ResponseEntity(boardPosts, HttpStatus.OK);
     }
 
-    // 게시글 등록 http://localhost:8080/api/v1/posts/register
+    // 게시글 등록 http://localhost:8080/api/v1/posts/register	
     @PostMapping("/posts/register")
     public ResponseEntity<Map<String, Long>> postPost(@RequestBody PostDto postDto) {
         Long id = postService.registerPost(postDto);
@@ -50,21 +50,21 @@ public class PostController {
         return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
     }
 
-    // 게시글 상세조회 http://localhost:8080/api/v1/posts/list/1
+    // 게시글 상세조회 http://localhost:8080/api/v1/posts/1	
     @GetMapping("/posts/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable("postId") Long id) {
         PostDto postDto = postService.retrivePost(id);
         return new ResponseEntity<>(postDto, HttpStatus.OK);
     }
 
-    // 게시글 삭제 http://localhost:8080/api/v1/posts/list/2
+    // 게시글 삭제 http://localhost:8080/api/v1/posts/48
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable("id") int id) {
         postService.removePost(id);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 
-    // 게시글 수정 http://localhost:8080/api/v1/posts/list/1
+    // 게시글 수정 http://localhost:8080/api/v1/posts/43
     @PutMapping("/posts/{id}")
     public ResponseEntity<String> putPost(@PathVariable("id") Long id, @RequestBody PostDto postDto) {
         postDto.setId(id);
@@ -72,7 +72,7 @@ public class PostController {
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    // 검색과 페이징 처리
+    // 검색과 페이징 처리 http://localhost:8080/api/v1/posts/search?page=1&size=2	&   http://localhost:8080/api/v1/posts/search?page=1&size=10&keyfield=title&keyword=검색테스트
     @GetMapping("/posts/search")
     public ResponseEntity<PageResponseDto<PostDto>> getPosts(
             @RequestParam(value = "keyfield", required = false) String keyfield,

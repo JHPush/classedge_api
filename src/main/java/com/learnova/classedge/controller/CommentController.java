@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api/v1/comments")
 public class CommentController {
 
-    private final ClassedgeApplication classedgeApplication;
-
     private final CommentService commentService;
 
 

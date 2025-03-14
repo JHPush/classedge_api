@@ -66,9 +66,8 @@ public class Comment {
         this.regDate = this.regDate == null ? LocalDateTime.now() : this.regDate;
     }
 
-    
     @PreUpdate
     public void preUpdate() {
-        this.regDate = LocalDateTime.now();  // 수정 시 regDate를 현재 시간으로 업데이트
+        this.regDate = LocalDateTime.now(); 
     }
 }

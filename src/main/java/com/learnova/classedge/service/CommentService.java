@@ -27,15 +27,15 @@ public interface CommentService {
 
     
     //Dto -> Entity
-    default Comment dtoToEntity(CommentDto dto){
+    default Comment dtoToEntity(CommentDto commentDto){
 
         return Comment.builder()
-            .content(dto.getContent())
+            .content(commentDto.getContent())
             .regDate(LocalDateTime.now())
-            .email(dto.getEmail())
-            .postId(dto.getPostId())
-            .parentId(dto.getParentId() != null ? Comment.builder().id(dto.getParentId()).build() : null)
-            .level(dto.getLevel() != 0 ? dto.getLevel() : 1)
+            .email(commentDto.getEmail())
+            .postId(commentDto.getPostId())
+            .parentId(commentDto.getParentId() != null ? Comment.builder().id(commentDto.getParentId()).build() : null)
+            .level(commentDto.getLevel() != 0 ? commentDto.getLevel() : 1)
             .build();
     }
 

@@ -1,9 +1,14 @@
 package com.learnova.classedge.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +17,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,25 +38,37 @@ public class Comment {
     @Column(name = "c_id")
     private Long id;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name="m_email")
-    private String member;
-
     @Column(name = "c_content", nullable = false)
     private String content;
 
-    @Column(name = "c_reg_date", updatable= false)
-    @CreatedDate
+    @Column(name = "c_reg_date")
     private LocalDateTime regDate;
 
-    // @ManyToOne(fetch = FetchType.EAGER) // 게시글에 댓글이 바로 보이기 위해 
-    // @JoinColumn(name="post_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="c_parent_comment_id")
+    private Comment parentId;
+
+    @Column(name = "c_email", nullable = false)
+    private String email;
+
+    @Column(name = "c_post_id")
     private Long postId;
 
+    @Column(name = "level")
+    private Integer level;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name="c_parent_comment_id", referencedColumnName = "c_id")
-    // private Long parent_comment_id;
+    @OneToMany(mappedBy = "parentId", orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> subComments = new ArrayList<>();
 
+    @PrePersist
+    public void prePersist() {
+        this.regDate = this.regDate == null ? LocalDateTime.now() : this.regDate;
+    }
 
+    
+    @PreUpdate
+    public void preUpdate() {
+        this.regDate = LocalDateTime.now();  // 수정 시 regDate를 현재 시간으로 업데이트
+    }
 }

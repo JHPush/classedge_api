@@ -1,8 +1,11 @@
 package com.learnova.classedge.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.learnova.classedge.domain.Comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,15 +22,20 @@ public class CommentDto {
 
     private Long id;
 
-    private String member;
-
     private String content;
 
     @JsonFormat(pattern= "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime regDate;
 
+    private Long parentId;
+
+    private String email;
+
     private Long postId;
 
-    //private Long parent_comment_id;
+    private Integer level = 0;
 
+    private List<CommentDto> subComments = new ArrayList<>();
+
+    
 }

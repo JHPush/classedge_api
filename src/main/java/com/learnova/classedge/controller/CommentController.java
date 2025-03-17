@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.learnova.classedge.ClassedgeApplication;
 import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.service.CommentService;
@@ -37,7 +35,7 @@ public class CommentController {
 
     //댓글 목록 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<List<CommentDto>> getComment(@PathVariable Long postId){
+    public ResponseEntity<List<CommentDto>> getComment(@PathVariable("postId") Long postId){
 
         List<CommentDto> commentList = commentService.retrieveComment(postId);
 
@@ -68,7 +66,7 @@ public class CommentController {
 
      //댓글삭제
      @DeleteMapping("/{id}")
-     public ResponseEntity<String> deleteComment(@PathVariable Long id){
+     public ResponseEntity<String> deleteComment(@PathVariable("id") Long id){
         
         try {
          commentService.removeComment(id);
@@ -83,7 +81,7 @@ public class CommentController {
 
      //댓글수정
      @PutMapping("/{id}")
-     public ResponseEntity<String> putComment(@PathVariable Long id, @RequestBody CommentDto commentDto) {
+     public ResponseEntity<String> putComment(@PathVariable("id") Long id, @RequestBody CommentDto commentDto) {
 
         try {
             commentDto.setId(id);

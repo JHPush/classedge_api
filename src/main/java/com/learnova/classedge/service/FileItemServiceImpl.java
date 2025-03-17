@@ -19,9 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.learnova.classedge.controller.FileItemController;
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
+import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
+import com.learnova.classedge.repository.PostRepository;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -35,6 +37,7 @@ import net.coobird.thumbnailator.Thumbnailator;
 public class FileItemServiceImpl implements FileItemService{
 
     private final FileItemRepository fileItemRepository;
+    private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
     //경로설정
@@ -55,11 +58,20 @@ public class FileItemServiceImpl implements FileItemService{
 
     //파일업로드
     @Override
-    public void uploadFile(MultipartFile file, Long commentId) {
+    public void uploadFile(MultipartFile file, Long postId, Long commentId) {
       
-        Comment comment = commentRepository.findById(commentId)
+        Post post = null;
+        Comment comment= null;
+
+        if(postId != null){ 
+            post = postRepository.findById(postId)
+            .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id:" +postId));
+        }
+        if(commentId !=null){ 
+             comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. id:" + commentId ));
-        
+        }
+
         //파일명 생성
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         
@@ -88,10 +100,13 @@ public class FileItemServiceImpl implements FileItemService{
             .fileName(fileName)
             .fileExtension(getFileExtension(fileName))
             .comment(comment)
+            .post(post)
             .build();
 
         fileItemRepository.save(fileEntity);
     }
+
+
 
 
     //파일확장자
@@ -101,6 +116,8 @@ public class FileItemServiceImpl implements FileItemService{
     }
   
 
+
+    
 
     //파일다운로드
     @Override

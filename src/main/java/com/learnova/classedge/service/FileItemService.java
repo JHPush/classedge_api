@@ -10,7 +10,7 @@ public interface FileItemService {
 
 
     //파일업로드,썸네일
-    public void uploadFile(MultipartFile file, Long commentId);
+    public void uploadFile(MultipartFile file, Long postId, Long commentId);
 
     //파일다운로드
     public Resource downloadFile(Long id);

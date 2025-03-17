@@ -22,7 +22,7 @@ public class FileItemDto {
 
     private String fileExtension;
 
-    // private Long postId;
+    private Long postId;
 
     private Long commentId;
 

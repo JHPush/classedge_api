@@ -31,11 +31,12 @@ public class JwtCheckFilter extends OncePerRequestFilter{
         String path = request.getRequestURI();
         
         // preflight 요청 - OPTIONS (리퀘스트 사전검증), /api/v1 경로로 오는 요청은 필터를 거치지 않음
-        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/")){
+        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1")){
             return true;
         }
         return false;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -60,8 +61,10 @@ public class JwtCheckFilter extends OncePerRequestFilter{
                                                 , password, isWithdraw, role
                                                 , nickname, loginType);
     
+            // UsernamePasswordAuthenticationToken에 권한 추가
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(memberDto, memberDto.getPassword(), memberDto.getAuthorities());
+            
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
@@ -71,6 +74,7 @@ public class JwtCheckFilter extends OncePerRequestFilter{
             }
             log.error("Error in JwtCheckFilter : {}", e);
             
+            // JWT 오류 시 에러 메시지 전송
             Gson gson = new Gson();
             String jsonStr = gson.toJson(Map.of("error","ERROR_ACCESS_TOKEN"));
             response.setContentType("application/json; charset=UTF-8");

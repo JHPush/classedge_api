@@ -27,7 +27,7 @@ import lombok.Setter;
 @Table(name = "Member")
 @Getter @Setter
 @Entity
-public class Member implements UserDetails {
+public class Member {
 
     @Id
     @Column(name = "m_email")
@@ -65,49 +65,10 @@ public class Member implements UserDetails {
     }
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 권한은 사용자 역할에 따라 결정(ROLE_ADMIN, ROLE_PROFESSOR, ROLE_STUDENT)
-        return Collections.singletonList(() -> "ROLE_" + role.name());
+    // 사용자에게 역할 부여
+    public void setRole(MemberRole memberRole) {
+        this.role = memberRole;
     }
 
-    @Override
-    public String getPassword() {
-        // 암호화된 비밀번호 반환
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        // 로그인 시 사용되는 ID 반환
-        return id;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        // 계정 만료 여부
-        // 만료되지 않도록 true 반환
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        // 계정 잠금 여부
-        // 잠금되지 않도록 true 반환
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        // 자격 증명 만료 여부
-        // 만료되지 않도록 true 반환
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        // 탈퇴 여부에 따라 활성화 여부 결정
-        return !isWithdraw;
-    }
 }    
 

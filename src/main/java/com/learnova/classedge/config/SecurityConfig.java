@@ -43,7 +43,7 @@ public class SecurityConfig {
         });
         // 로그인 설정
         http.formLogin(conf->{
-            conf.loginPage("/api/v1/login/go"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
+            conf.loginPage("/api/v1/login"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
             conf.successHandler(new ApiLoginSuccessHandler());
             conf.failureHandler(new ApiLoginFailureHandler());
         });

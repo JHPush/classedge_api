@@ -19,14 +19,17 @@ public class MemberLoginService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         Member member = memberLoginRepository.getMemberById(username);
-        if(member == null)
-            throw new UsernameNotFoundException(username);
+        
+        if(member == null || member.getIsWithdraw() == null || member.getIsWithdraw())
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username);
         
         MemberDto memberDto = new MemberDto(member.getEmail(), member.getId(), member.getMemberName()
                                             , member.getPassword(), member.getIsWithdraw(), member.getRole()
                                             , member.getNickname(), member.getLoginType()
         );
+
         return memberDto;
     }
 }

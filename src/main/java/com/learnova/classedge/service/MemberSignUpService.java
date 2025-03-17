@@ -1,11 +1,11 @@
 package com.learnova.classedge.service;
 
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.dto.MemberDto;
+import com.learnova.classedge.dto.MemberRequestDto;
 import com.learnova.classedge.repository.MemberManagementRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,14 +18,18 @@ public class MemberSignUpService { // 회원가입 및 회원 관련 작업을 �
     private final MemberManagementRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Member registerMember(MemberDto memberDto){
+    // 일반 회원 가입
+    public Member registerMember(MemberRequestDto memberRequestDto){
+
+        // MemberDto로 변환
+        MemberDto memberDto = memberRequestDto.toMemberDto();
 
         Member member = Member.builder()
                               .email(memberDto.getEmail())
                               .id(memberDto.getId())
                               .memberName(memberDto.getMemberName())
                               .password(passwordEncoder.encode(memberDto.getPassword()))
-                              .isWithdraw(memberDto.getIsWithdraw())
+                              .isWithdraw(memberDto.getIsWithdraw() != null ? memberDto.getIsWithdraw() : false)
                               .role(memberDto.getRole())
                               .nickname(memberDto.getNickname())
                               .loginType(memberDto.getLoginType())

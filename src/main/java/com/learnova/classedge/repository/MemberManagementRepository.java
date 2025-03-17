@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.learnova.classedge.domain.Member;
 
 public interface MemberManagementRepository extends JpaRepository<Member, String> { // <Entity, PK>
+    
     @Query("SELECT m FROM Member m WHERE m.email = :email")
     Member getMemberByEmail(@Param("email") String email);
 

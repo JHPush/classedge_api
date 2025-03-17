@@ -10,11 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
 import com.learnova.classedge.dto.PostSearchCondition;
+import com.learnova.classedge.repository.CommentRepository;
+import com.learnova.classedge.repository.FileItemRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final FileItemRepository fileItemRepository;
 
      // 게시글 목록조회
     @Override
@@ -64,12 +69,31 @@ public class PostServiceImpl implements PostService {
         return postDto;
     }
 
-    // 게시글 삭제
-    @Transactional(readOnly = false)
-    @Override
-    public void removePost(Long id) {
-        postRepository.deleteById(id);
-    }
+   // 게시글 삭제
+   @Transactional(readOnly = false)
+   @Override
+   public void removePost(Long postId) {
+
+       // 1. 게시글 조회
+       Post post = postRepository.findById(postId)
+               .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+       fileItemRepository.deleteAllByPostId(postId);
+
+       // 2. 게시글에 연관된 댓글들을 가져옴
+       List<Comment> comments = post.getComments();
+
+       // 3. 각 댓글에서 연관된 대댓글(SubComment)을 orphanRemoval로 자동 삭제
+       for (Comment comment : comments) {
+           comment.getSubComments().clear(); // 대댓글 리스트 비움 (orphanRemoval 작동)
+       }
+
+       // 4. 댓글 삭제
+       commentRepository.deleteAll(comments); // 모든 댓글 삭제
+
+       // 5. 게시글 삭제
+       postRepository.delete(post);
+   }
 
     // 게시글 수정 
     @Transactional(readOnly = false)

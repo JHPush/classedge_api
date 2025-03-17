@@ -16,6 +16,9 @@ public interface MemberManagementRepository extends JpaRepository<Member, String
     @Query("SELECT m FROM Member m WHERE m.id = :id")
     Member getMemberById(@Param("id") String id);
 
+    @Query("SELECT m FROM Member m WHERE m.nickname = :nickname")
+    Member getMemberByNickname(@Param("nickname") String nickname);
+
     // id로 회원 조회
     Optional<Member> findById(String id);
 

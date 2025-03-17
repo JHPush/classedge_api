@@ -52,7 +52,7 @@ public class JwtCheckFilter extends OncePerRequestFilter{
             String id = (String)claims.get("m_id");
             String name = (String)claims.get("m_name");
             String password = (String)claims.get("m_password");
-            Boolean isWithdraw = (0 != Integer.parseInt((String)claims.get("m_is_withdraw")));
+            Boolean isWithdraw = (0 != Integer.parseInt((String)claims.get("m_is_withdraw"))); // Boolean.parseBoolean() 이용하면 코드 간소화 가능
             MemberRole role = MemberRole.valueOf((String)claims.get("m_role"));
             String nickname = (String)claims.get("m_nickname");
             LoginType loginType = LoginType.valueOf((String)claims.get("m_login_type"));

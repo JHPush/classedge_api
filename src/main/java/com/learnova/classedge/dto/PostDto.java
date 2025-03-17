@@ -28,4 +28,8 @@ public class PostDto {
     private LocalDateTime lmiDate;
 
     private String boardName;
+
+    private int commentCount;  
+    
+    private boolean hasFile;
 }

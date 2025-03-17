@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
+import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
@@ -30,6 +32,9 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final FileItemRepository fileItemRepository;
+
+    @Autowired
+    private FileItemService fileItemService;
 
      // 게시글 목록조회
     @Override
@@ -74,26 +79,31 @@ public class PostServiceImpl implements PostService {
    @Override
    public void removePost(Long postId) {
 
-       // 1. 게시글 조회
        Post post = postRepository.findById(postId)
                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
+       //시스템내 파일 삭제
+       List<FileItem> files = fileItemRepository.findByPostId(postId);
+       for (FileItem file : files) {
+            fileItemService.removeFile(file.getId());  
+        }
+
+       //DB 에서 파일 삭제
        fileItemRepository.deleteAllByPostId(postId);
 
-       // 2. 게시글에 연관된 댓글들을 가져옴
+       //댓글 삭제
        List<Comment> comments = post.getComments();
-
-       // 3. 각 댓글에서 연관된 대댓글(SubComment)을 orphanRemoval로 자동 삭제
        for (Comment comment : comments) {
-           comment.getSubComments().clear(); // 대댓글 리스트 비움 (orphanRemoval 작동)
+           comment.getSubComments().clear(); 
        }
 
-       // 4. 댓글 삭제
-       commentRepository.deleteAll(comments); // 모든 댓글 삭제
+       commentRepository.deleteAll(comments); 
 
-       // 5. 게시글 삭제
        postRepository.delete(post);
+
    }
+
+
 
     // 게시글 수정 
     @Transactional(readOnly = false)
@@ -118,7 +128,16 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(pageRequestDto.getPage() - 1, pageRequestDto.getSize());
 
         Page<Post> page = postRepository.paging(condition, pageable);
-        List<PostDto> posts = page.get().map(post -> entityToDto(post)).collect(Collectors.toList());
+        List<PostDto> posts = page.get().map(post -> {
+            int commentCount = commentRepository.countByPostId(post.getId());  // 댓글 개수 조회
+            boolean hasFile = fileItemRepository.existsByPostId(post.getId()); // 파일 첨부 여부 확인
+    
+            PostDto postDto = entityToDto(post);
+            postDto.setCommentCount(commentCount);
+            postDto.setHasFile(hasFile);
+    
+            return postDto;
+        }).collect(Collectors.toList());
 
         long totalCount = page.getTotalElements();
 

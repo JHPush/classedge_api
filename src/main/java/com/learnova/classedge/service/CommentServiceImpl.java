@@ -96,7 +96,7 @@ public class CommentServiceImpl implements CommentService{
             comment.setLevel(parent.getLevel() + 1);
         }
         else{
-            comment.setLevel(0); 
+            comment.setLevel(1); 
         }
 
         Comment savedComment = commentRepository.save(comment);

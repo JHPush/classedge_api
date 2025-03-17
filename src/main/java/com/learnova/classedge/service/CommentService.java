@@ -36,7 +36,6 @@ public interface CommentService {
             .email(commentDto.getEmail())
             .post(post)
             .parent(commentDto.getParent() != null ? Comment.builder().id(commentDto.getParent()).build() : null)
-            .level(commentDto.getLevel() != 0 ? commentDto.getLevel() : 1)
             .build();
     }
 

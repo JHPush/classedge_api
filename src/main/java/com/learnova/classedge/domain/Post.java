@@ -50,12 +50,15 @@ public class Post {
     @Column(name = "p_board_name")
     private String boardName;
 
-    // @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<FileItem> fileItems = new ArrayList<>();
+
+    // private int commentCount;
+
+    // private boolean hasFile;
     
 
     @PrePersist

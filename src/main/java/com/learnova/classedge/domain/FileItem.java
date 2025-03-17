@@ -40,7 +40,7 @@ public class FileItem {
     private String fileExtension;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "f_post_id")
+    @JoinColumn(name = "f_post_id")
     private Post post;
     
     @ManyToOne(fetch = FetchType.LAZY)

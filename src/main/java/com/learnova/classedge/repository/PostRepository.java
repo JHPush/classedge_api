@@ -12,7 +12,7 @@ import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.PostSearchCondition;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Integer>, CustomPostRepository  {
+public interface PostRepository extends JpaRepository<Post, Long>, CustomPostRepository  {
 
   // NOTICE / TASK 조회하는 쿼리 메서드
   @Query("SELECT p FROM Post p WHERE p.boardName = :boardName ORDER BY p.regDate DESC limit :limit")

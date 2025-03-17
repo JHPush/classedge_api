@@ -55,7 +55,7 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<FileItem> fileitems = new ArrayList<>();
+    private List<FileItem> fileItems = new ArrayList<>();
     
 
     @PrePersist

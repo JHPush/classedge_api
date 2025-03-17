@@ -8,6 +8,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
+import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.service.CommentService;
 
@@ -26,6 +27,9 @@ public class CommentRepositoryTest {
     private CommentRepository commentRepository;
 
     @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
     private CommentService commentService;
 
     @Test
@@ -37,14 +41,14 @@ public class CommentRepositoryTest {
     @Rollback(false)
     public void testCommentSave(){
         
-        Long postId=1L;
+        Post post = postRepository.findById(Long.valueOf("1")).orElseThrow();
 
         for(int i=1; i < 5; i++){
         Comment parentComment = new Comment();
             parentComment.setContent("댓글내용" + i);
             parentComment.setRegDate(LocalDateTime.now());
             parentComment.setEmail("user" + i +"@gmail.com");
-            parentComment.setPostId(postId);
+            parentComment.setPost(post);
         
         commentRepository.save(parentComment);
     
@@ -56,8 +60,8 @@ public class CommentRepositoryTest {
         subComment.setContent("답글내용" + j);
         subComment.setRegDate(LocalDateTime.now());
         subComment.setEmail("user" + j +"@gmail.com");
-        subComment.setPostId(Long.valueOf("1"));
-        subComment.setParentId(parentComment);
+        subComment.setPost(post);
+        subComment.setParent(parentComment);
         
         
         commentRepository.save(subComment);

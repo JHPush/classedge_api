@@ -58,7 +58,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 상세조회
     @Override
     public PostDto retrivePost(Long id) {
-        Optional<Post> result = postRepository.findById(id.intValue());
+        Optional<Post> result = postRepository.findById(id);
         Post post = result.orElseThrow();
         PostDto postDto = entityToDto(post);
         return postDto;
@@ -67,7 +67,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 삭제
     @Transactional(readOnly = false)
     @Override
-    public void removePost(int id) {
+    public void removePost(Long id) {
         postRepository.deleteById(id);
     }
 
@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = false)
     @Override
     public void modifyPost(PostDto postDto) {
-        Optional<Post> result = postRepository.findById(postDto.getId().intValue());
+        Optional<Post> result = postRepository.findById(postDto.getId());
         Post post = result.orElseThrow();
         post.changeTitle(postDto.getTitle());
         post.changeContents(postDto.getContents());

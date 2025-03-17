@@ -15,7 +15,7 @@ public interface CommentService {
     List<CommentDto> retrieveComment(Long postId);
 
     //댓글 등록
-    Long registerComment(CommentDto commentDto, Long postId, Long parentId, Post post);
+    Long registerComment(CommentDto commentDto, Long postId, Long parentId);
 
     //댓글 삭제
     public void removeComment(Long id);

@@ -64,7 +64,7 @@ public class PostRepositoryTest {
         // then
         assertDoesNotThrow(() -> {
 
-            Optional<Post> result = postRepository.findById(id.intValue());
+            Optional<Post> result = postRepository.findById(id);
 
             Post post = result.orElseThrow();
 

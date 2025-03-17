@@ -16,6 +16,7 @@ import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
+import com.learnova.classedge.repository.PostRepository;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
 
 
 
@@ -77,11 +79,13 @@ public class CommentServiceImpl implements CommentService{
     //댓글 등록
     @Override
     @Transactional(readOnly = false)
-    public Long registerComment(CommentDto commentDto, Long postId, Long parentId, Post post){
+    public Long registerComment(CommentDto commentDto, Long postId, Long parentId){
         
-        Comment comment = dtoToEntity(commentDto, post);
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new ArticleNotFoundException("유효하지 않은 게시글입니다."));
+        
 
-       //postid=null일 경우 exception code 추가해야함
+        Comment comment = dtoToEntity(commentDto, post);
         
         if(parentId !=null){
             Optional<Comment> parentComment = commentRepository.findById(parentId);
@@ -97,7 +101,7 @@ public class CommentServiceImpl implements CommentService{
 
         Comment savedComment = commentRepository.save(comment);
 
-        log.info("Saved comment ID: {}, postId: {}", savedComment.getId(), savedComment.getPost());
+        log.info("Saved comment ID: {}, postId: {}", savedComment.getId(), savedComment.getPost().getId());
         
         return savedComment.getId();
     }

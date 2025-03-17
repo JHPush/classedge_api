@@ -15,7 +15,7 @@ public interface PostService {
     PageResponseDto<PostDto> paging(PostSearchCondition condition,PageRequestDto pageRequestDto);     // 검색, 페이징 처리
     Long registerPost(PostDto postDto); // 작성
     PostDto retrivePost(Long id); // 상세조회
-    void removePost(int id); // 삭제
+    void removePost(Long id); // 삭제
     void modifyPost(PostDto postDto); // 수정
 
     // PostDto => Post 엔티티 변환

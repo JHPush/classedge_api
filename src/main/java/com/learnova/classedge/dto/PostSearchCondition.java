@@ -13,5 +13,7 @@ public class PostSearchCondition {
 
     private String writer;
 
+    private String boardName;
+
 
 }

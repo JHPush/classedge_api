@@ -26,6 +26,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
+     // 게시글 목록조회 http://localhost:8080/api/v1/posts
     @Override
     public List<PostDto> retrievePostList() {
         List<Post> result = postRepository.findAll();
@@ -35,10 +36,10 @@ public class PostServiceImpl implements PostService {
         return postDtoList;
     }
 
-    // 게시글 목록조회 http://localhost:8080/api/v1/posts/list?boardName=notice or task
+    // 게시글 목록조회 http://localhost:8080/api/v1/posts?boardName=notice or task
     @Override
-    public List<PostDto> retrievePostList(String boardName) {
-        List<Post> result = postRepository.findByBoardName(boardName);
+    public List<PostDto> retrievePostList(String boardName, int limit) {
+        List<Post> result = postRepository.findByBoardName(boardName, limit);
         List<PostDto> postDtoList = result.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());

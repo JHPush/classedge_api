@@ -34,12 +34,15 @@ public class PostController {
     private final PostService postService;
 
   
-    // 게시글 목록조회 - 카테고리 별 http://localhost:8080/api/v1/posts?boardName=notice or task
+    // 게시글 목록조회 - 카테고리 별 http://localhost:8080/api/v1/posts?limit=5
     @GetMapping("/posts")
-    public ResponseEntity<PostDto> getPostBoard(@RequestParam("boardName") String boardName) {
-        log.info("boardName : {}", boardName);
-        List<PostDto> boardPosts = postService.retrievePostList(boardName);
-        return new ResponseEntity(boardPosts, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getPostBoard(            
+            @RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
+            
+            List<PostDto> taskPosts = postService.retrievePostList("TASK", limit);
+            List<PostDto> noticePosts = postService.retrievePostList("NOTICE", limit);          
+     
+            return new ResponseEntity( Map.of("task", taskPosts, "notice", noticePosts), HttpStatus.OK);
     }
 
     // 게시글 등록 http://localhost:8080/api/v1/posts/register	
@@ -77,6 +80,8 @@ public class PostController {
     public ResponseEntity<PageResponseDto<PostDto>> getPosts(
             @RequestParam(value = "keyfield", required = false) String keyfield,
             @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "boardName", required = false) String boardName,
+           
             PageRequestDto pageRequestDto) {
 
         log.info("page : {}, size : {}", pageRequestDto.getPage(), pageRequestDto.getSize());
@@ -91,6 +96,11 @@ public class PostController {
             } else if (keyfield.equals("writer")) {
                 condition.setWriter(keyword);
             }
+        }
+
+        // boardName 처리
+        if (boardName !=null) {
+            condition.setBoardName(boardName);
         }
 
         PageResponseDto<PostDto> result = postService.paging(condition, pageRequestDto);

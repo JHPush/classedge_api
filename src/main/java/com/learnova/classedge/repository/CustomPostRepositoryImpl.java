@@ -77,7 +77,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 .from(post)
                 .where(writerLike(condition.getWriter()),
                         contentsLike(condition.getContents()),
-                        titleLike(condition.getTitle()))
+                        titleLike(condition.getTitle()),
+                        boardNameEq(condition.getBoardName()))
                 .orderBy(post.id.desc())
                 .offset(pageable.getPageNumber() * pageable.getPageSize())
                 .limit(pageable.getPageSize())
@@ -127,6 +128,12 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     private BooleanExpression titleLike(String title) {
 
         return title == null ? null : post.title.like("%" + title + "%");
+
+    }
+
+    private BooleanExpression boardNameEq(String boardName) {
+
+        return boardName == null ? null : post.boardName.eq(boardName);
 
     }
 

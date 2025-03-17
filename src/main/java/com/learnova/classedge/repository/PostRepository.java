@@ -15,8 +15,8 @@ import com.learnova.classedge.dto.PostSearchCondition;
 public interface PostRepository extends JpaRepository<Post, Integer>, CustomPostRepository  {
 
   // NOTICE / TASK 조회하는 쿼리 메서드
-  @Query("SELECT p FROM Post p WHERE p.boardName = :boardName ORDER BY p.regDate DESC")
-  List<Post> findByBoardName(@Param("boardName") String boardName);
+  @Query("SELECT p FROM Post p WHERE p.boardName = :boardName ORDER BY p.regDate DESC limit :limit")
+  List<Post> findByBoardName(@Param("boardName") String boardName, @Param("limit") int limit);
 
 
 

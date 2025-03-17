@@ -39,10 +39,9 @@ public class FileItem {
     @Column(name = "f_file_extension")
     private String fileExtension;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    // @Column(name = "f_post_id")
-    //private Post post;
-    // private Long postId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "f_post_id")
+    private Post post;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "f_comment_id")

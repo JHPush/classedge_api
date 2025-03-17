@@ -46,13 +46,13 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="c_parent_comment_id")
-    private Comment parentId;
+    private Comment parent;
+
+    @JoinColumn(name = "c_post_id")
+    private Post post; // 게시글 참조
 
     @Column(name = "c_email", nullable = false)
     private String email;
-
-    @Column(name = "c_post_id")
-    private Long postId;
 
     @Column(name = "level")
     private Integer level;
@@ -60,6 +60,9 @@ public class Comment {
     @OneToMany(mappedBy = "parentId", orphanRemoval = true)
     @JsonIgnore
     private List<Comment> subComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "comment")
+    private List<FileItem> fileitems = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

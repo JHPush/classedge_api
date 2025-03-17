@@ -27,7 +27,7 @@ public class CommentDto {
     @JsonFormat(pattern= "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime regDate;
 
-    private Long parentId;
+    private Long parent;
 
     private String email;
 

@@ -59,6 +59,7 @@ dependencies {
     // 테스트할 때 lombok 사용
     testCompileOnly 'org.projectlombok:lombok:1.18.30'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+   
 }
 
 tasks.named('test') {

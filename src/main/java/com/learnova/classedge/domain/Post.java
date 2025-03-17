@@ -57,9 +57,9 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<FileItem> fileItems = new ArrayList<>();
 
-    // private int commentCount;
+    private int commentCount;
 
-    // private boolean hasFile;
+    private boolean hasFile;
 
 
     @PrePersist

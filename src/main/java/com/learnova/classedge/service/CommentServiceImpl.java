@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
+import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
@@ -46,7 +47,7 @@ public class CommentServiceImpl implements CommentService{
                 .id((Long) result[0])
                 .content((String) result[1])
                 .regDate(result[2] != null ? ((Timestamp) result[2]).toLocalDateTime() : null)
-                .parentId(result[3] != null ? (Long) result[3] : null)
+                .parent(result[3] != null ? (Long) result[3] : null)
                 .email((String) result[4])
                 .postId((Long) result[5])
                 .subComments(new ArrayList<>())
@@ -59,11 +60,11 @@ public class CommentServiceImpl implements CommentService{
         List<CommentDto> parentComments = new ArrayList<>();
 
         for(CommentDto comment : commentMap.values()){
-            if(comment.getParentId() ==null){
+            if(comment.getParent() ==null){
                 parentComments.add(comment);                       //부모댓글일 경우 댓글 추가
 
             }else {
-                CommentDto parentComment = commentMap.get(comment.getParentId());
+                CommentDto parentComment = commentMap.get(comment.getParent());
                 parentComment.getSubComments().add(comment);       //답글일 경우 
             }
         }
@@ -76,9 +77,9 @@ public class CommentServiceImpl implements CommentService{
     //댓글 등록
     @Override
     @Transactional(readOnly = false)
-    public Long registerComment(CommentDto commentDto, Long postId, Long parentId){
+    public Long registerComment(CommentDto commentDto, Long postId, Long parentId, Post post){
         
-        Comment comment = dtoToEntity(commentDto);
+        Comment comment = dtoToEntity(commentDto, post);
 
        //postid=null일 경우 exception code 추가해야함
         
@@ -87,7 +88,7 @@ public class CommentServiceImpl implements CommentService{
                 
             Comment parent = parentComment.orElseThrow(() -> new ArticleNotFoundException("요청한 부모댓글이 존재하지 않습니다."));
 
-            comment.setParentId(parent);
+            comment.setParent(parent);
             comment.setLevel(parent.getLevel() + 1);
         }
         else{
@@ -96,7 +97,7 @@ public class CommentServiceImpl implements CommentService{
 
         Comment savedComment = commentRepository.save(comment);
 
-        log.info("Saved comment ID: {}, postId: {}", savedComment.getId(), savedComment.getPostId());
+        log.info("Saved comment ID: {}, postId: {}", savedComment.getId(), savedComment.getPost());
         
         return savedComment.getId();
     }

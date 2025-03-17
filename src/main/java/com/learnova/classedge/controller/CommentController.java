@@ -56,7 +56,7 @@ public class CommentController {
         @RequestParam(value="parent", required = false) Long parentId) {
 
         commentDto.setPostId(postId);
-        commentDto.setParentId(parentId);
+        commentDto.setParent(parentId);
          
         Long id = commentService.registerComment(commentDto, postId, parentId);
 

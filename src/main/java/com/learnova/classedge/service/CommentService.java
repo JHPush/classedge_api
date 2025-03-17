@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.learnova.classedge.domain.Comment;
+import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
 
 public interface CommentService {
@@ -14,7 +15,7 @@ public interface CommentService {
     List<CommentDto> retrieveComment(Long postId);
 
     //댓글 등록
-    Long registerComment(CommentDto commentDto, Long postId, Long parentId);
+    Long registerComment(CommentDto commentDto, Long postId, Long parentId, Post post);
 
     //댓글 삭제
     public void removeComment(Long id);
@@ -27,14 +28,14 @@ public interface CommentService {
 
     
     //Dto -> Entity
-    default Comment dtoToEntity(CommentDto commentDto){
+    default Comment dtoToEntity(CommentDto commentDto, Post post){
 
         return Comment.builder()
             .content(commentDto.getContent())
             .regDate(LocalDateTime.now())
             .email(commentDto.getEmail())
-            .postId(commentDto.getPostId())
-            .parentId(commentDto.getParentId() != null ? Comment.builder().id(commentDto.getParentId()).build() : null)
+            .post(post)
+            .parent(commentDto.getParent() != null ? Comment.builder().id(commentDto.getParent()).build() : null)
             .level(commentDto.getLevel() != 0 ? commentDto.getLevel() : 1)
             .build();
     }
@@ -46,10 +47,10 @@ public interface CommentService {
             .id(comment.getId())
             .content(comment.getContent())
             .regDate(comment.getRegDate())
-            .parentId(comment.getParentId() != null ? comment.getParentId().getId(): null) // 부모아이디가 있으면 부모아이디 반환 아니면 null 반환
+            .parent(comment.getParent() != null ? comment.getParent().getId(): null) // 부모아이디가 있으면 부모아이디 반환 아니면 null 반환
             .subComments(comment.getSubComments() !=null ? SubCommentToDto(comment.getSubComments()) : new ArrayList<>())
             .email(comment.getEmail())
-            .postId(comment.getPostId())
+            .postId(comment.getPost().getId())
             .level(comment.getLevel())
             .build();
             

@@ -13,5 +13,9 @@ public interface FileItemService {
     public void uploadFile(MultipartFile file, Long commentId);
 
     //파일다운로드
-    public Resource downloadFile(String filename);
+    public Resource downloadFile(Long id);
+
+    //파일삭제
+    public void removeFile(Long id);
+    
 }

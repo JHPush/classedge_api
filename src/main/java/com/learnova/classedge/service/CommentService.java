@@ -58,7 +58,7 @@ public interface CommentService {
     //댓글의 답글 리스트 
     private List<CommentDto> SubCommentToDto(List<Comment> subComments){
         return subComments.stream()
-            .map(this::entityToDto)
+            .map(comment -> entityToDto(comment)) 
             .collect(Collectors.toList());
     }
 

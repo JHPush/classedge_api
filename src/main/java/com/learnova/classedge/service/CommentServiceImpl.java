@@ -30,6 +30,8 @@ public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
 
+
+
     //댓글 조회
     @Override
     @Transactional(readOnly = true)
@@ -69,6 +71,8 @@ public class CommentServiceImpl implements CommentService{
     }
 
 
+
+
     //댓글 등록
     @Override
     @Transactional(readOnly = false)
@@ -76,23 +80,28 @@ public class CommentServiceImpl implements CommentService{
         
         Comment comment = dtoToEntity(commentDto);
 
+       //postid=null일 경우 exception code 추가해야함
+        
         if(parentId !=null){
-           Optional<Comment> parentComment = commentRepository.findById(parentId); 
+            Optional<Comment> parentComment = commentRepository.findById(parentId);
+                
+            Comment parent = parentComment.orElseThrow(() -> new ArticleNotFoundException("요청한 부모댓글이 존재하지 않습니다."));
 
-           if(parentComment.isPresent()){
-            comment.setParentId(parentComment.get());
-            comment.setLevel(parentComment.get().getLevel()+1);
-           }
-        }else{
-            comment.setLevel(0);
-           
+            comment.setParentId(parent);
+            comment.setLevel(parent.getLevel() + 1);
         }
+        else{
+            comment.setLevel(0); 
+        }
+
         Comment savedComment = commentRepository.save(comment);
 
         log.info("Saved comment ID: {}, postId: {}", savedComment.getId(), savedComment.getPostId());
         
         return savedComment.getId();
     }
+
+
 
 
     //댓글 삭제
@@ -106,6 +115,8 @@ public class CommentServiceImpl implements CommentService{
         commentRepository.delete(comment);
     }
 
+
+    
     //댓글 수정
     @Override
     @Transactional

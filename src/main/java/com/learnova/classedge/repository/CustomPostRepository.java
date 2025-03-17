@@ -18,8 +18,6 @@ public interface CustomPostRepository {
 
     long getTotalCount();
 
-    // List<Post> paging(PageRequestDto pageRequestDto);
-
     Page<Post> paging(PostSearchCondition condition,  Pageable pageable);
 
 

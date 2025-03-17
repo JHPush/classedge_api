@@ -26,7 +26,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
-     // 게시글 목록조회 http://localhost:8080/api/v1/posts
+     // 게시글 목록조회
     @Override
     public List<PostDto> retrievePostList() {
         List<Post> result = postRepository.findAll();
@@ -36,7 +36,7 @@ public class PostServiceImpl implements PostService {
         return postDtoList;
     }
 
-    // 게시글 목록조회 http://localhost:8080/api/v1/posts?boardName=notice or task
+    // 게시글 목록조회
     @Override
     public List<PostDto> retrievePostList(String boardName, int limit) {
         List<Post> result = postRepository.findByBoardName(boardName, limit);
@@ -46,7 +46,7 @@ public class PostServiceImpl implements PostService {
         return postDtoList;
     }
 
-    // 게시글 등록 http://localhost:8080/api/v1/posts/register
+    // 게시글 등록
     @Transactional(readOnly = false)
     @Override
     public Long registerPost(PostDto postDto) {
@@ -55,7 +55,7 @@ public class PostServiceImpl implements PostService {
         return post.getId();
     }
 
-    // 게시글 상세조회 http://localhost:8080/api/v1/posts/list/1
+    // 게시글 상세조회
     @Override
     public PostDto retrivePost(Long id) {
         Optional<Post> result = postRepository.findById(id.intValue());
@@ -64,14 +64,14 @@ public class PostServiceImpl implements PostService {
         return postDto;
     }
 
-    // 게시글 삭제 http://localhost:8080/api/v1/posts/list/2
+    // 게시글 삭제
     @Transactional(readOnly = false)
     @Override
     public void removePost(int id) {
         postRepository.deleteById(id);
     }
 
-    // 게시글 수정 http://localhost:8080/api/v1/posts/list/1
+    // 게시글 수정 
     @Transactional(readOnly = false)
     @Override
     public void modifyPost(PostDto postDto) {

@@ -1,6 +1,5 @@
 package com.learnova.classedge.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

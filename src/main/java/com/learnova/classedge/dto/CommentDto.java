@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.learnova.classedge.domain.Comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

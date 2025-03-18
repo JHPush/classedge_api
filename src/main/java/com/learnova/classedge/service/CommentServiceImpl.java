@@ -8,14 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
+import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
+import com.learnova.classedge.repository.FileItemRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.Getter;
@@ -32,6 +35,10 @@ public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final FileItemRepository fileItemRepository;
+
+    @Autowired
+    private FileItemService fileItemService;
 
 
 
@@ -84,13 +91,15 @@ public class CommentServiceImpl implements CommentService{
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ArticleNotFoundException("유효하지 않은 게시글입니다."));
         
-
         Comment comment = dtoToEntity(commentDto, post);
         
         if(parentId !=null){
-            Optional<Comment> parentComment = commentRepository.findById(parentId);
-                
-            Comment parent = parentComment.orElseThrow(() -> new ArticleNotFoundException("요청한 부모댓글이 존재하지 않습니다."));
+            Comment parent = commentRepository.findById(parentId)
+                .orElseThrow(() -> new ArticleNotFoundException("요청한 부모댓글이 존재하지 않습니다."));
+
+            if(!parent.getPost().getId().equals(postId)){
+                throw new IllegalArgumentException("요청한 부모 댓글은 게시글 번호에 해당하지 않습니다");
+            }
 
             comment.setParent(parent);
             comment.setLevel(parent.getLevel() + 1);
@@ -116,6 +125,15 @@ public class CommentServiceImpl implements CommentService{
 
         Comment comment = commentRepository.findById(id)
             .orElseThrow(() -> new ArticleNotFoundException("댓글이 존재하지 않습니다. ID: " + id));
+
+        //시스템내 파일 삭제
+        List<FileItem> files = fileItemRepository.findByCommentId(id);
+        for (FileItem file : files) {
+            fileItemService.removeFile(file.getId());  
+        }
+
+        //DB 에서 파일 삭제
+        fileItemRepository.deleteAllByCommentId(id);
 
         commentRepository.delete(comment);
     }

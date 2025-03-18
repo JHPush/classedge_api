@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,8 +58,10 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<FileItem> fileItems = new ArrayList<>();
 
+    @Transient
     private int commentCount;
-
+    
+    @Transient
     private boolean hasFile;
 
 

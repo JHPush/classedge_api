@@ -18,4 +18,9 @@ public interface FileItemRepository extends JpaRepository<FileItem, Long> {
     void deleteAllByPostId(@Param("postId") Long postId);
 
     boolean existsByPostId(Long postId);
+
+    List<FileItem> findByCommentId(Long commentId);
+
+    void deleteAllByCommentId(Long commentId);
+    
 }

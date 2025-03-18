@@ -2,6 +2,8 @@ package com.learnova.classedge.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +31,9 @@ public class PostDto {
 
     private String boardName;
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int commentCount;  
     
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private boolean hasFile;
 }

@@ -93,12 +93,18 @@ public class CommentServiceImpl implements CommentService{
         
         Comment comment = dtoToEntity(commentDto, post);
         
+        int maxLevel =2;
+
         if(parentId !=null){
             Comment parent = commentRepository.findById(parentId)
                 .orElseThrow(() -> new ArticleNotFoundException("요청한 부모댓글이 존재하지 않습니다."));
 
             if(!parent.getPost().getId().equals(postId)){
-                throw new IllegalArgumentException("요청한 부모 댓글은 게시글 번호에 해당하지 않습니다");
+                throw new IllegalArgumentException("요청한 부모 댓글은 게시글 번호에 해당하지 않습니다.");
+            }
+
+            if(parent.getLevel()>=maxLevel){
+                throw new IllegalArgumentException("댓글의 답글에는 답글을 작성할 수 없습니다.");
             }
 
             comment.setParent(parent);

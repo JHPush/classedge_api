@@ -37,7 +37,7 @@ public class Post {
     @Column(name = "p_title")
     private String title;
 
-    @Column(name = "p_contents")
+    @Column(name = "p_content")
     private String contents;
 
     @Column(name = "p_writer")

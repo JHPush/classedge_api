@@ -93,8 +93,8 @@ public class PostController {
                 condition.setTitle(keyword);
             } else if (keyfield.equals("contents")) {
                 condition.setContents(keyword);
-            } else if (keyfield.equals("writer")) {
-                condition.setWriter(keyword);
+            } else if (keyfield.equals("email")) {
+                condition.setEmail(keyword);
             }
         }
 

@@ -33,7 +33,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     @Override
     public List<Object[]> findAllByTitle1(String titleStr) {
 
-        String qlString = "SELECT p.id, p.title, p.writer FROM Post AS p WHERE p.title LIKE :title";
+        String qlString = "SELECT p.id, p.title, p.email FROM Post AS p WHERE p.title LIKE :title";
 
         @SuppressWarnings("unchecked")
         List<Object[]> posts = em.createQuery(qlString)
@@ -75,7 +75,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         List<Post> posts = jpaQueryFactory
                 .select(post)
                 .from(post)
-                .where(writerLike(condition.getWriter()),
+                .where(emailLike(condition.getEmail()),
                         contentsLike(condition.getContents()),
                         titleLike(condition.getTitle()),
                         boardNameEq(condition.getBoardName()))
@@ -89,7 +89,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
           long totalCount = jpaQueryFactory
           .select(post)
           .from(post)
-          .where(writerLike(condition.getWriter()),
+          .where(emailLike(condition.getEmail()),
                   contentsLike(condition.getContents()),
                   titleLike(condition.getTitle()))
           .fetchCount();
@@ -113,9 +113,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     }
 
-    private BooleanExpression writerLike(String writer) {
+    private BooleanExpression emailLike(String email) {
 
-        return writer == null ? null : post.writer.like("%" + writer + "%");
+        return email == null ? null : post.email.like("%" + email + "%");
 
     }
 

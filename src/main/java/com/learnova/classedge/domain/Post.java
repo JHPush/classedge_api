@@ -40,8 +40,8 @@ public class Post {
     @Column(name = "p_content")
     private String contents;
 
-    @Column(name = "p_writer")
-    private String writer;
+    @Column(name = "p_email")
+    private String email;
 
     @Column(name = "p_reg_date")
     private LocalDateTime regDate = LocalDateTime.now();
@@ -89,8 +89,8 @@ public class Post {
         this.contents = contents;
     }
 
-    public void changeWriter(String writer) {
-        this.writer = writer;
+    public void changeEmail(String email) {
+        this.email = email;
     }
 
     public void changeRegDate(LocalDateTime regDate) {

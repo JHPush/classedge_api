@@ -113,7 +113,7 @@ public class PostServiceImpl implements PostService {
         Post post = result.orElseThrow();
         post.changeTitle(postDto.getTitle());
         post.changeContents(postDto.getContents());
-        post.changeWriter(postDto.getWriter());
+        post.changeEmail(postDto.getEmail());
         post.changeRegDate(postDto.getRegDate());
         post.setLmiDate(postDto.getLmiDate());
         post.changeBoardName(postDto.getBoardName());

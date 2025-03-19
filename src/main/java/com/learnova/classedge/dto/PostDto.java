@@ -23,7 +23,7 @@ public class PostDto {
 
     private String contents;
 
-    private String writer;
+    private String email;
 
     private LocalDateTime regDate;
 

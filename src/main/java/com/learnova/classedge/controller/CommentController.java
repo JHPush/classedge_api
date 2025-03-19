@@ -1,5 +1,6 @@
 package com.learnova.classedge.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
@@ -51,15 +53,16 @@ public class CommentController {
 
     //댓글등록
     @PostMapping
-    public ResponseEntity<Map<String, Long>> postComment(
+    public ResponseEntity<Map<String, Object>> postComment(
         @RequestBody CommentDto commentDto, 
         @RequestParam(value = "post") Long postId, 
         @RequestParam(value="parent", required = false) Long parentId,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        MemberDto memberDto = (MemberDto)userDetails;
+        MemberDto memberDto = (MemberDto) userDetails;
 
         String email = memberDto.getEmail();
+        String memberName = memberDto.getMemberName();
 
         commentDto.setPostId(postId);
         commentDto.setParent(parentId);
@@ -67,10 +70,13 @@ public class CommentController {
 
         Long id = commentService.registerComment(commentDto, postId, parentId);
 
-        log.info("id: {}, postId: {}, parentId: {}", id, postId, parentId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", id);
+        response.put("memberName", memberName);
+
+        log.info("id: {}, postId: {}, parentId: {}, memberName: {}", id, postId, parentId, memberName);
         
-       
-        return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
      //댓글삭제

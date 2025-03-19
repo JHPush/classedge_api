@@ -46,11 +46,11 @@ public class JwtCheckFilter extends OncePerRequestFilter{
         String accessToken = (header.contains(" ")? header.split(" ")[1]: header); 
         
         Map<String, Object> claims = JwtUtil.validationToken(accessToken);
-        
+    
         try {
             String email = (String)claims.get("email");
             String id = (String)claims.get("id");
-            String name = (String)claims.get("name");
+            String memberName = (String)claims.get("memberName");
             String password = (String)claims.get("password");
             log.warn("password : {}", password);
             Boolean isWithdraw = ((Boolean)claims.get("isWithdraw")); // Boolean.parseBoolean() 이용하면 코드 간소화 가능
@@ -59,11 +59,11 @@ public class JwtCheckFilter extends OncePerRequestFilter{
             MemberRole role = MemberRole.valueOf((String)claims.get("role"));
             String nickname = (String)claims.get("nickname");
             LoginType loginType = LoginType.valueOf((String)claims.get("loginType"));
-    
-            MemberDto memberDto = new MemberDto(email, id, name
+        
+            MemberDto memberDto = new MemberDto(email, id, memberName
                                                 , password, isWithdraw, role
                                                 , nickname, loginType);
-    
+
             // UsernamePasswordAuthenticationToken에 권한 추가
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(memberDto, memberDto.getPassword(), memberDto.getAuthorities());

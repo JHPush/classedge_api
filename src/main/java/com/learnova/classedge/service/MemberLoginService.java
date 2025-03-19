@@ -10,8 +10,9 @@ import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.repository.MemberManagementRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Service 
 @RequiredArgsConstructor
 public class MemberLoginService implements UserDetailsService {
 
@@ -29,7 +30,7 @@ public class MemberLoginService implements UserDetailsService {
                                             , member.getPassword(), member.getIsWithdraw(), member.getRole()
                                             , member.getNickname(), member.getLoginType()
         );
-
+      
         return memberDto;
     }
 }

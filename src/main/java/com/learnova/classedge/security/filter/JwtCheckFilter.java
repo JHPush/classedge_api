@@ -31,7 +31,7 @@ public class JwtCheckFilter extends OncePerRequestFilter{
         String path = request.getRequestURI();
         
         // preflight 요청 - OPTIONS (리퀘스트 사전검증), /api/v1 경로로 오는 요청은 필터를 거치지 않음
-        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1")){
+        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login")){
             return true;
         }
         return false;
@@ -41,21 +41,24 @@ public class JwtCheckFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String header = request.getHeader("Authorization");
-
-        // 가끔 다른 형태의 값이 들어올때 예외처리
+        log.warn("token Header : {} ", header);
+                // 가끔 다른 형태의 값이 들어올때 예외처리
         String accessToken = (header.contains(" ")? header.split(" ")[1]: header); 
         
         Map<String, Object> claims = JwtUtil.validationToken(accessToken);
         
         try {
-            String email = (String)claims.get("m_email");
-            String id = (String)claims.get("m_id");
-            String name = (String)claims.get("m_name");
-            String password = (String)claims.get("m_password");
-            Boolean isWithdraw = (0 != Integer.parseInt((String)claims.get("m_is_withdraw"))); // Boolean.parseBoolean() 이용하면 코드 간소화 가능
-            MemberRole role = MemberRole.valueOf((String)claims.get("m_role"));
-            String nickname = (String)claims.get("m_nickname");
-            LoginType loginType = LoginType.valueOf((String)claims.get("m_login_type"));
+            String email = (String)claims.get("email");
+            String id = (String)claims.get("id");
+            String name = (String)claims.get("name");
+            String password = (String)claims.get("password");
+            log.warn("password : {}", password);
+            Boolean isWithdraw = ((Boolean)claims.get("isWithdraw")); // Boolean.parseBoolean() 이용하면 코드 간소화 가능
+            log.warn("isWithdraw : {}", isWithdraw);
+            
+            MemberRole role = MemberRole.valueOf((String)claims.get("role"));
+            String nickname = (String)claims.get("nickname");
+            LoginType loginType = LoginType.valueOf((String)claims.get("loginType"));
     
             MemberDto memberDto = new MemberDto(email, id, name
                                                 , password, isWithdraw, role

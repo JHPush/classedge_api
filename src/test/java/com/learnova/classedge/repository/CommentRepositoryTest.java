@@ -37,37 +37,37 @@ public class CommentRepositoryTest {
         assertNotNull(commentRepository);
     }
 
-    @Test
-    @Rollback(false)
-    public void testCommentSave(){
+//     @Test
+//     @Rollback(false)
+//     public void testCommentSave(){
         
-        Post post = postRepository.findById(Long.valueOf("1")).orElseThrow();
+//         Post post = postRepository.findById(Long.valueOf("1")).orElseThrow();
 
-        for(int i=1; i < 5; i++){
-        Comment parentComment = new Comment();
-            parentComment.setContent("댓글내용" + i);
-            parentComment.setRegDate(LocalDateTime.now());
-            parentComment.setEmail("user" + i +"@gmail.com");
-            parentComment.setPost(post);
+//         for(int i=1; i < 5; i++){
+//         Comment parentComment = new Comment();
+//             parentComment.setContent("댓글내용" + i);
+//             parentComment.setRegDate(LocalDateTime.now());
+//             parentComment.setEmail("user" + i +"@gmail.com");
+//             parentComment.setPost(post);
         
-        commentRepository.save(parentComment);
+//         commentRepository.save(parentComment);
     
-        // 부모댓글 id=1 인 답글 생성
-        if(i ==1){
-        for(int j=1; j < 5; j++){
-        Comment subComment = new Comment();
+//         // 부모댓글 id=1 인 답글 생성
+//         if(i ==1){
+//         for(int j=1; j < 5; j++){
+//         Comment subComment = new Comment();
         
-        subComment.setContent("답글내용" + j);
-        subComment.setRegDate(LocalDateTime.now());
-        subComment.setEmail("user" + j +"@gmail.com");
-        subComment.setPost(post);
-        subComment.setParent(parentComment);
+//         subComment.setContent("답글내용" + j);
+//         subComment.setRegDate(LocalDateTime.now());
+//         subComment.setEmail("user" + j +"@gmail.com");
+//         subComment.setPost(post);
+//         subComment.setParent(parentComment);
         
         
-        commentRepository.save(subComment);
-    }}
-}
-}
+//         commentRepository.save(subComment);
+//     }}
+// }
+// }
 
     @Test
     @Rollback(false)

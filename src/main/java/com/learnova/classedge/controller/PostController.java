@@ -1,11 +1,15 @@
 package com.learnova.classedge.controller;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.learnova.classedge.domain.MemberRole;
+import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
@@ -47,10 +53,25 @@ public class PostController {
 
     // 게시글 등록 http://localhost:8080/api/v1/posts/register	
     @PostMapping("/posts/register")
-    public ResponseEntity<Map<String, Long>> postPost(@RequestBody PostDto postDto) {
+    @PreAuthorize(value = "ROLE_")
+    public ResponseEntity<Map<String, Long>> postPost(
+            @RequestBody PostDto postDto, 
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        MemberDto dto = (MemberDto)userDetails;
+
+        String email = dto.getEmail();
+        String memberName = dto.getMemberName();
+        MemberRole role  = dto.getRole();
+
+       
+        postDto.setWriter(email);
+
         Long id = postService.registerPost(postDto);
         log.info("id : {}", id);
+
         return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
+
     }
 
     // 게시글 상세조회 http://localhost:8080/api/v1/posts/1	

@@ -52,8 +52,9 @@ public class Comment {
     @JoinColumn(name = "c_post_id")
     private Post post; 
 
-    @Column(name = "c_email", nullable = false)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "c_email")
+    private Member member;
 
     @Column(name = "level")
     private Integer level;

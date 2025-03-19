@@ -53,7 +53,7 @@ public class PostController {
 
     // 게시글 등록 http://localhost:8080/api/v1/posts/register	
     @PostMapping("/posts/register")
-    @PreAuthorize(value = "ROLE_")
+    //@PreAuthorize(value = "ROLE_")
     public ResponseEntity<Map<String, Long>> postPost(
             @RequestBody PostDto postDto, 
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -65,7 +65,7 @@ public class PostController {
         MemberRole role  = dto.getRole();
 
        
-        postDto.setWriter(email);
+        postDto.setEmail(email);
 
         Long id = postService.registerPost(postDto);
         log.info("id : {}", id);

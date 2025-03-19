@@ -31,7 +31,7 @@ public class JwtCheckFilter extends OncePerRequestFilter{
         String path = request.getRequestURI();
         
         // preflight 요청 - OPTIONS (리퀘스트 사전검증), /api/v1 경로로 오는 요청은 필터를 거치지 않음
-        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login") || path.startsWith("/api/v1/signup")){
+        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login") || path.startsWith("/api/v1/signup") || path.startsWith("/api/v1/login/kakao")){
             return true;
         }
         return false;

@@ -1,12 +1,15 @@
 package com.learnova.classedge.service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,93 +18,104 @@ import org.springframework.web.client.RestTemplate;
 
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.dto.KakaoUserInfoDto;
-import com.learnova.classedge.repository.MemberManagementRepository;
+import com.learnova.classedge.dto.MemberRequestDto;
+import com.learnova.classedge.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KakaoAuthService {
 
-    // @Value("${kakao.client-id}")
-    // private String clientId;
+    private final MemberSignUpService memberSignUpService;
+    private final RestTemplate restTemplate;
 
-    // @Value("${kakao.redirect-uri}")
-    // private String redirectUri;
+    @Value("${spring.oauth.kakao.client-id}")
+    private String CLIENT_ID;
 
-    // @Value("${kakao.token-uri}")
-    // private String tokenUri;
+    @Value("${spring.oauth.kakao.redirect-uri}")
+    private String REDIRECT_URI;
 
-    // @Value("${kakao.user-info-uri}")
-    // private String userInfoUri;
+    // 카카오 로그인(인가 코드 사용)
+    public String kakaoLogin(String code, MemberRequestDto memberRequestDto) {
 
-    // private final RestTemplate restTemplate;
-    // /*************/
-
-    // private final MemberManagementRepository memberManagementRepository;
-    // private final MemberSignUpService memberSignUpService;
-    // private final MemberLoginService memberLoginService;
-
-    // public ResponseEntity<?> processKakaoUser(KakaoUserInfoDto kakaoUserInfo) {
+        // 1. 인가 코드로 카카오 토큰 요청
+        String accessToken = getKakaoAccessToken(code);
+        log.info("accessToken : {}", accessToken);
         
-    //     Optional<Member> existingMember = memberManagementRepository.getMemberByNickname(kakaoUserInfo.getNickname());
+        // 2. 카카오 사용자 정보 가져오기
+        KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
+        log.info("kakaoUserInfo : {}", kakaoUserInfo);
 
-    //     if (existingMember.isPresent()) {
-    //         // 기존 회원이면 로그인 진행
-    //         return memberLoginService.login(existingMember.get());
-    //     } else {
-    //         // 신규 회원이면 회원가입을 위한 추가 정보 입력 페이지로 이동
-    //         return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-    //                 .header("Location", "/signup/kakao?nickname=" + kakaoUserInfo.getNickname())
-    //                 .build();
-    //     }
-    // }
+        // 3️⃣ 회원가입 또는 로그인 처리
+        Member member;
+        Optional<Member> existingMember = memberSignUpService.findMemberByNickname(kakaoUserInfo.getNickname());
 
+        if (existingMember.isPresent()) {
+            // 기존 회원이면 로그인 처리
+            member = existingMember.get();
+        } else {
+            // 신규 가입: 사용자가 직접 정보 입력한 경우만 회원가입 진행
+            if (memberRequestDto == null || memberRequestDto.getEmail() == null) {
+                throw new IllegalArgumentException("추가 정보 입력이 필요합니다.");
+            }
+            member = memberSignUpService.kakaoSignUp(kakaoUserInfo, memberRequestDto);
+        }
 
-    // /***********/
-    // // 카카오 로그인 url 생성
-    public String getKakaoLoginUrl() {
-        // return "https://kauth.kakao.com/oauth/authorize"
-        //         + "?client_id=" + clientId
-        //         + "&redirect_uri=" + redirectUri
-        //         + "&response_type=code";
-        return null;
+        // 4️⃣ JWT 생성 후 반환
+        return createToken(member);
     }
 
-    // // 인가 코드로 Kakao 액세스 토큰 요청
-    public String getAccessToken(String code) {
+    // JWT 토큰 생성
+    private String createToken(Member member) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", member.getId());
+        claims.put("nickname", member.getNickname());
+        claims.put("email", member.getEmail());
+        claims.put("role", member.getRole().name());
 
-        // HttpHeaders headers = new HttpHeaders();
-        // headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        // MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        // body.add("grant_type", "authorization_code"); // 카카오에서 요구하는 고정 값
-        // body.add("client_id", clientId); // 내 Kakao 앱의 REST API 키
-        // body.add("redirect_uri", redirectUri); // 인가 코드 요청 시 사용한 동일한 redirect URI
-        // body.add("code", code); // Kakao에서 받은 인가 코드
-
-        // HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-
-        // ResponseEntity<Map> response = restTemplate.postForEntity(tokenUri, request, Map.class);
-        // return response.getBody().get("access_token").toString();
-        return null;
+        log.info("claims: {}", claims);
+        return JwtUtil.generateToken(claims, 60 * 24); // 24시간 유효한 토큰
     }
 
-    // // 액세스 토큰으로 사용자 정보 요청
-    public KakaoUserInfoDto getKakaoUserInfo(String accessToken) {
+    // 카카오 인가 코드로 액세스 토큰 발급
+    private String getKakaoAccessToken(String code) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code"); // 카카오에서 요구하는 고정 값
+        params.add("client_id", CLIENT_ID); // 내 Kakao 앱의 REST API 키
+        params.add("redirect_uri", REDIRECT_URI); // 인가 코드 요청 시 사용한 동일한 redirect URI
+        params.add("code", code); // Kakao에서 받은 인가 코드
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity("https://kauth.kakao.com/oauth/token", request, Map.class); // KAKAO_TOKEN_URL
         
-        // HttpHeaders headers = new HttpHeaders();
-        // headers.set("Authorization", "Bearer " + accessToken);
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            return (String) response.getBody().get("access_token");
+        } else {
+            throw new RuntimeException("카카오 액세스 토큰 요청 실패");
+        }
+    }
 
-        // HttpEntity<?> request = new HttpEntity<>(headers);
-        // ResponseEntity<Map> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, request, Map.class);
+    // 카카오 API에서 사용자 닉네임 정보 조회
+    private KakaoUserInfoDto getKakaoUserInfo(String accessToken) {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Void> request = new HttpEntity<>(headers);
 
-        // Map<String, Object> kakaoAccount = (Map<String, Object>) response.getBody().get("kakao_account");
-        // Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        ResponseEntity<Map> response = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET, request, Map.class);// KAKAO_USER_INFO_URL
+        Map<String, Object> kakaoAccount = (Map<String, Object>) response.getBody().get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
-        // return new KakaoUserInfoDto(profile.get("nickname").toString());
-        return null;
+        String nickname = (String) profile.get("nickname");
+
+        return new KakaoUserInfoDto(nickname);
     }
 }

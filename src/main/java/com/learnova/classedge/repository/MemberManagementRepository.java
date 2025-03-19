@@ -22,4 +22,7 @@ public interface MemberManagementRepository extends JpaRepository<Member, String
     // id로 회원 조회
     Optional<Member> findById(String id);
 
+    // 카카오 nickname 조회
+    Optional<Member> findByNickname(String nickname);
+
 }

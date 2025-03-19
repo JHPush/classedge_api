@@ -27,6 +27,13 @@ spring:
       enabled: true             # 파일 업로드 기능 활성화 여부
       file-size-threshold: 2KB  # 파일 크기 임계값 설정 (2KB 이하의 파일은 메모리에서 처리)
      
+  oauth:
+    kakao:
+      client-id: 0dfc6bf7b966b2bdfe198d82fc657170
+      redirect-uri: http://localhost:8080/api/v1/login/kakao
+      url:
+        auth: https://kauth.kakao.com
+        api: https://kapi.kakao.com
     
 
 # Logging

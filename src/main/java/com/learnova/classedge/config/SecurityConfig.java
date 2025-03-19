@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -41,6 +40,13 @@ public class SecurityConfig {
         http.sessionManagement(conf->{
             conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         });
+
+        // URL 접근 권한 설정
+        http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/v1/login/kakao").permitAll() // 카카오 로그인 허용
+            .requestMatchers("/api/v1/login", "/api/v1/signup").permitAll() // 일반 로그인 & 회원가입 허용
+            .anyRequest().authenticated() // 그 외 요청은 인증 필요
+        );
         // 로그인 설정
         http.formLogin(conf->{
             conf.loginPage("/api/v1/login"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
@@ -83,3 +89,4 @@ public class SecurityConfig {
         return source;
     }
 }
+

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.learnova.classedge.dto.CommentDto;
+import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.service.CommentService;
 
@@ -51,11 +54,17 @@ public class CommentController {
     public ResponseEntity<Map<String, Long>> postComment(
         @RequestBody CommentDto commentDto, 
         @RequestParam(value = "post") Long postId, 
-        @RequestParam(value="parent", required = false) Long parentId) {
+        @RequestParam(value="parent", required = false) Long parentId,
+        @AuthenticationPrincipal UserDetails userDetails) {
+
+        MemberDto memberDto = (MemberDto)userDetails;
+
+        String email = memberDto.getEmail();
 
         commentDto.setPostId(postId);
         commentDto.setParent(parentId);
-         
+        commentDto.setEmail(email);
+
         Long id = commentService.registerComment(commentDto, postId, parentId);
 
         log.info("id: {}, postId: {}, parentId: {}", id, postId, parentId);

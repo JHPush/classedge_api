@@ -14,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
+import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
+import com.learnova.classedge.repository.MemberManagementRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.Getter;
@@ -36,6 +38,7 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final FileItemRepository fileItemRepository;
+    private final MemberManagementRepository memberManagementRepository;
 
     @Autowired
     private FileItemService fileItemService;
@@ -90,8 +93,10 @@ public class CommentServiceImpl implements CommentService{
         
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ArticleNotFoundException("유효하지 않은 게시글입니다."));
+
+        Member member = memberManagementRepository.getMemberByEmail(commentDto.getEmail());
         
-        Comment comment = dtoToEntity(commentDto, post);
+        Comment comment = dtoToEntity(commentDto, post, member);
         
         int maxLevel =2;
 

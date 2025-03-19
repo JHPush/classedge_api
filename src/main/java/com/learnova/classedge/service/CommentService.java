@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.learnova.classedge.domain.Comment;
+import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
 
@@ -28,16 +29,16 @@ public interface CommentService {
 
     
     //Dto -> Entity
-    default Comment dtoToEntity(CommentDto commentDto, Post post){
+    default Comment dtoToEntity(CommentDto commentDto, Post post, Member member){
 
         return Comment.builder()
             .content(commentDto.getContent())
             .regDate(LocalDateTime.now())
-            .email(commentDto.getEmail())
+            .member(member)
             .post(post)
             .parent(commentDto.getParent() != null ? Comment.builder().id(commentDto.getParent()).build() : null)
             .build();
-    }
+    } 
 
     //Entity -> Dto
     default CommentDto entityToDto(Comment comment){
@@ -48,7 +49,7 @@ public interface CommentService {
             .regDate(comment.getRegDate())
             .parent(comment.getParent() != null ? comment.getParent().getId(): null) // 부모아이디가 있으면 부모아이디 반환 아니면 null 반환
             .subComments(comment.getSubComments() !=null ? SubCommentToDto(comment.getSubComments()) : new ArrayList<>())
-            .email(comment.getEmail())
+            .email(comment.getMember().getEmail())
             .postId(comment.getPost().getId())
             .level(comment.getLevel())
             .build();

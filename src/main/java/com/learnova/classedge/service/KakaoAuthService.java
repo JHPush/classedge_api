@@ -33,10 +33,10 @@ public class KakaoAuthService extends DefaultOAuth2UserService {
     private final MemberSignUpService memberSignUpService;
     private final RestTemplate restTemplate;
 
-    @Value("${spring.oauth.kakao.client-id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String CLIENT_ID;
 
-    @Value("${spring.oauth.kakao.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String REDIRECT_URI;
 
     // 카카오 로그인(인가 코드 사용)
@@ -92,6 +92,7 @@ public class KakaoAuthService extends DefaultOAuth2UserService {
         params.add("client_id", CLIENT_ID); // 내 Kakao 앱의 REST API 키
         params.add("redirect_uri", REDIRECT_URI); // 인가 코드 요청 시 사용한 동일한 redirect URI
         params.add("code", code); // Kakao에서 받은 인가 코드
+        log.info("params : {}", params);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 

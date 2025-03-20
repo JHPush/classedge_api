@@ -80,29 +80,3 @@ public class MemberSignUpService { // 회원가입 및 회원 관련 작업을 �
         return memberRepository.findByNickname(nickname);
     }
 }
-
-
-
-
-
-    // // Kakao로 회원 가입
-    // public ResponseEntity<?> signUpKakaoUser(KakaoUserInfoDto kakaoUserInfoDto, MemberRequestDto memberRequestDto) {
-
-    //     // 닉네임 중복 체크
-    //     if (memberRepository.existsByNickname(kakaoUserInfoDto.getNickname())) {
-    //         return ResponseEntity.badRequest().body("이미 사용 중인 닉네임입니다.");
-    //     }
-
-    //     Member newMember = Member.builder()
-    //             .nickname(request.getNickname())
-    //             .email(request.getEmail())
-    //             .username(request.getUsername())
-    //             .password(passwordEncoder.encode(request.getPassword()))
-    //             .role(MemberRole.STUDENT)
-    //             .loginType(LoginType.KAKAO) 
-    //             .build();
-
-    //     memberRepository.save(newMember);
-    //     return ResponseEntity.ok("회원가입 성공");
-    // }
-

@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -49,19 +50,18 @@ public class SecurityConfig {
             .anyRequest().authenticated() // 그 외 요청은 인증 필요
         );
 
+        // 카카오 로그인 설정
+        http.oauth2Login(conf->{
+            conf.loginPage("/api/v1/login/kakao");
+            conf.successHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
+            conf.failureHandler(new ApiLoginFailureHandler());
+        });
         // 로그인 설정
         http.formLogin(conf->{
             conf.loginPage("/api/v1/login"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
             conf.successHandler(new ApiLoginSuccessHandler());
             conf.failureHandler(new ApiLoginFailureHandler());
         });
-
-        // // 카카오 로그인 설정
-        // http.oauth2Login(conf->{
-        //     conf.loginPage("/api/v1/login/kakao");
-        //     conf.defaultSuccessUrl("/api/v1", true);
-        //     conf.failureUrl("/api/v1");
-        // });
 
         // JWT 필터 추가(로그인 후 요청에서 JWT를 확인하는 필터)
         http.addFilterBefore(new JwtCheckFilter(), UsernamePasswordAuthenticationFilter.class);

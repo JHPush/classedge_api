@@ -24,8 +24,10 @@ public class KakaoAuthController {
 
     // 카카오 로그인 요청 (인가 코드 받기)
     @GetMapping("/login/kakao")
-    public ResponseEntity<String> kakaoLogin(@RequestParam("code") String code, 
+    public ResponseEntity<String> kakaoLogin(@RequestParam(value = "code", required = false) String code, 
                                              @RequestBody(required = false) MemberRequestDto memberRequestDto) {
+    
+        log.info("code : {}", code);
         try {
             // KakaoAuthService를 이용하여 로그인 또는 회원가입 처리 후 JWT 반환
             String jwtToken = kakaoAuthService.kakaoLogin(code, memberRequestDto);

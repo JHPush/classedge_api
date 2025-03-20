@@ -21,6 +21,7 @@ import com.learnova.classedge.security.handler.ApiLoginFailureHandler;
 import com.learnova.classedge.security.handler.ApiLoginSuccessHandler;
 import com.learnova.classedge.security.handler.DetailAccessDeniedHandler;
 
+
 @Configuration
 @EnableWebSecurity // 웹 시큐리티 활성화
 @EnableMethodSecurity // 메소드 관련 인가 처리 
@@ -47,12 +48,20 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/login", "/api/v1/signup").permitAll() // 일반 로그인 & 회원가입 허용
             .anyRequest().authenticated() // 그 외 요청은 인증 필요
         );
+
         // 로그인 설정
         http.formLogin(conf->{
             conf.loginPage("/api/v1/login"); // 로그인 요청 처리 엔드포인트 URI ex) /api/v1/login
             conf.successHandler(new ApiLoginSuccessHandler());
             conf.failureHandler(new ApiLoginFailureHandler());
         });
+
+        // // 카카오 로그인 설정
+        // http.oauth2Login(conf->{
+        //     conf.loginPage("/api/v1/login/kakao");
+        //     conf.defaultSuccessUrl("/api/v1", true);
+        //     conf.failureUrl("/api/v1");
+        // });
 
         // JWT 필터 추가(로그인 후 요청에서 JWT를 확인하는 필터)
         http.addFilterBefore(new JwtCheckFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -30,8 +30,9 @@ public class JwtCheckFilter extends OncePerRequestFilter{
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         
+        log.info("path : {}", path);
         // preflight 요청 - OPTIONS (리퀘스트 사전검증), /api/v1 경로로 오는 요청은 필터를 거치지 않음
-        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login") || path.startsWith("/api/v1/signup") || path.startsWith("/api/v1/login/kakao")){
+        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login") || path.startsWith("/api/v1/signup") || path.startsWith("/favicon.ico")){
             return true;
         }
         return false;
@@ -40,9 +41,13 @@ public class JwtCheckFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        log.info("request : {}", request.getHeaderNames());
+
         String header = request.getHeader("Authorization");
         log.warn("token Header : {} ", header);
-                // 가끔 다른 형태의 값이 들어올때 예외처리
+
+        // 가끔 다른 형태의 값이 들어올때 예외처리
         String accessToken = (header.contains(" ")? header.split(" ")[1]: header); 
         
         Map<String, Object> claims = JwtUtil.validationToken(accessToken);
@@ -50,7 +55,7 @@ public class JwtCheckFilter extends OncePerRequestFilter{
         try {
             String email = (String)claims.get("email");
             String id = (String)claims.get("id");
-            String name = (String)claims.get("name");
+            String name = (String)claims.get("memberName");
             String password = (String)claims.get("password");
             log.warn("password : {}", password);
             Boolean isWithdraw = ((Boolean)claims.get("isWithdraw")); // Boolean.parseBoolean() 이용하면 코드 간소화 가능

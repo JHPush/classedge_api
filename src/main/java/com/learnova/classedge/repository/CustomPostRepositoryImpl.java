@@ -75,7 +75,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         List<Post> posts = jpaQueryFactory
                 .select(post)
                 .from(post)
-                .where(emailLike(condition.getEmail()),
+                .where(
                         contentsLike(condition.getContents()),
                         titleLike(condition.getTitle()),
                         boardNameEq(condition.getBoardName()))
@@ -89,7 +89,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
           long totalCount = jpaQueryFactory
           .select(post)
           .from(post)
-          .where(emailLike(condition.getEmail()),
+          .where(
                   contentsLike(condition.getContents()),
                   titleLike(condition.getTitle()))
           .fetchCount();
@@ -113,11 +113,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     }
 
-    private BooleanExpression emailLike(String email) {
+    // private BooleanExpression emailLike(String email) {
 
-        return email == null ? null : post.email.like("%" + email + "%");
+    //     return email == null ? null : post.email.like("%" + email + "%");
 
-    }
+    // }
 
     private BooleanExpression contentsLike(String contents) {
 

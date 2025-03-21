@@ -25,9 +25,6 @@ public interface CommentService {
     public void modifyComment(CommentDto commentDto, Long id);
 
 
-
-
-    
     //Dto -> Entity
     default Comment dtoToEntity(CommentDto commentDto, Post post, Member member){
 

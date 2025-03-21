@@ -25,6 +25,7 @@ import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
 import com.learnova.classedge.dto.PostSearchCondition;
+import com.learnova.classedge.service.CommentService;
 import com.learnova.classedge.service.PostService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PostController {
 
     private final PostService postService;
-
+    
   
     // 게시글 목록조회 - 카테고리 별 http://localhost:8080/api/v1/posts?limit=5
     @GetMapping("/posts")
@@ -62,10 +63,7 @@ public class PostController {
         String email = dto.getEmail();
         String memberName = dto.getMemberName();
         MemberRole role  = dto.getRole();
-
-       
-        postDto.setEmail(email);
-
+   
         Long id = postService.registerPost(postDto);
         log.info("id : {}", id);
 

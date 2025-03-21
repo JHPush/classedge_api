@@ -23,7 +23,7 @@ public class PostDto {
 
     private String contents;
 
-    private String email;
+    private String nickname;
 
     private LocalDateTime regDate;
 
@@ -31,7 +31,7 @@ public class PostDto {
 
     private String boardName;
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    // @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int commentCount;  
     
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)

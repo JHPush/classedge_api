@@ -31,7 +31,10 @@ public class MemberManagementService {
     public Member findByEmail(String email) {
         return memberManagementRepository.getMemberByEmail(email);
     }
-
+    // 닉네임으로 회원 조회
+    public Member findByNickname(String nickname) {
+        return memberManagementRepository.getMemberByNickname(nickname);
+    }
     // 회원 활성화/비활성화 처리
     public void ActivateMember(MemberDto dto, boolean isWithdraw){
 

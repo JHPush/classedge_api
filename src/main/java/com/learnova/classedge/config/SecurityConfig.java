@@ -46,7 +46,7 @@ public class SecurityConfig {
         // URL 접근 권한 설정
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/v1/login/kakao").permitAll() // 카카오 로그인 허용
-            .requestMatchers("/api/v1/login", "/api/v1/signup").permitAll() // 일반 로그인 & 회원가입 허용
+            .requestMatchers("/api/v1/login", "/api/v1/signup/**").permitAll() // 일반 로그인 & 회원가입 허용
             .anyRequest().authenticated() // 그 외 요청은 인증 필요
         );
 

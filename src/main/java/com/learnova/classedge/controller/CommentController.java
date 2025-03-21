@@ -52,23 +52,23 @@ public class CommentController {
     }
 
     //댓글등록
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> postComment(
-        @RequestBody CommentDto commentDto, 
-        @RequestParam(value = "post") Long postId, 
-        @RequestParam(value="parent", required = false) Long parentId,
+        @RequestBody CommentDto commentDto,
         @AuthenticationPrincipal UserDetails userDetails) {
 
         MemberDto memberDto = (MemberDto) userDetails;
 
         String email = memberDto.getEmail();
         String memberName = memberDto.getMemberName();
-
-        commentDto.setPostId(postId);
-        commentDto.setParent(parentId);
+        
+        Long postId = commentDto.getPostId();
+        Long parentId = commentDto.getParent();
+    
         commentDto.setEmail(email);
 
-        Long id = commentService.registerComment(commentDto, postId, parentId);
+        log.info("commentDto: {}", commentDto);
+        Long id = commentService.registerComment(commentDto);
 
         Map<String, Object> response = new HashMap<>();
         response.put("id", id);

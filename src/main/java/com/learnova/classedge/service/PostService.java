@@ -1,8 +1,15 @@
 package com.learnova.classedge.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Post;
+import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
@@ -17,9 +24,16 @@ public interface PostService {
     PostDto retrivePost(Long id); // 상세조회
     void removePost(Long postId); // 삭제
     void modifyPost(PostDto postDto); // 수정
+   // Post retrievePostWithFiles(Long id); //게시글에 첨부된 파일 조회
+
+    
+
+    
+
 
     // PostDto => Post 엔티티 변환
     default Post dtoToEntity(final PostDto dto) {
+
         return Post.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
@@ -32,6 +46,14 @@ public interface PostService {
 
     // Post => PostDto 엔티티 변환
     default PostDto entityToDto(final Post post) {
+
+        List<FileItem> fileItmes = post.getFileItems();
+        List<FileItemDto> fileItemDtos = new ArrayList<>();
+        for(FileItem fileItem : fileItmes){
+            fileItemDtos.add(dtoToEntity1(fileItem));
+        }
+
+
         return PostDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -39,6 +61,32 @@ public interface PostService {
                 .regDate(post.getRegDate())
                 .lmiDate(post.getLmiDate())
                 .boardName(post.getBoardName())
+                .fileItems(fileItemDtos)
                 .build();
+    }
+
+
+    
+    default FileItemDto dtoToEntity1 (FileItem fileItem) {
+        return FileItemDto.builder()
+            .id(fileItem.getId())
+            .fileName(fileItem.getFileName())
+            .filePath(fileItem.getFilePath()) 
+            .fileSize(fileItem.getFileSize())
+            .fileExtension(fileItem.getFileExtension())
+            .thumbnailPath(fileItem.getThumbnailPath())
+            .build();
+        
+    }
+
+    default FileItem entityToDto1(FileItemDto dto) {
+        return FileItem.builder()
+                          .id(dto.getId())
+                          .fileName(dto.getFileName())
+                          .filePath(dto.getFilePath())
+                          .fileSize(dto.getFileSize())
+                          .fileExtension(dto.getFileExtension())
+                          .thumbnailPath(dto.getThumbnailPath())
+                          .build();
     }
 }

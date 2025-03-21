@@ -54,6 +54,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<FileItem> fileItems = new ArrayList<>();
 

@@ -88,7 +88,10 @@ public class CommentServiceImpl implements CommentService{
     //댓글 등록
     @Override
     @Transactional(readOnly = false)
-    public Long registerComment(CommentDto commentDto, Long postId, Long parentId){
+    public Long registerComment(CommentDto commentDto){
+        
+        Long postId = commentDto.getPostId();
+        Long parentId = commentDto.getParent();
         
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ArticleNotFoundException("유효하지 않은 게시글입니다."));

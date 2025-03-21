@@ -18,6 +18,7 @@ import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
 import com.learnova.classedge.dto.PostSearchCondition;
+import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
 import com.learnova.classedge.repository.PostRepository;
@@ -68,8 +69,8 @@ public class PostServiceImpl implements PostService {
     // 게시글 상세조회
     @Override
     public PostDto retrivePost(Long id) {
-        Optional<Post> result = postRepository.findById(id);
-        Post post = result.orElseThrow();
+        Post post = postRepository.findPostWithFiles(id);
+        //Post post = result.orElseThrow();
         PostDto postDto = entityToDto(post);
         return postDto;
     }
@@ -148,4 +149,16 @@ public class PostServiceImpl implements PostService {
                 .build();
 
     }
+
+
+    // //파일정보조회
+    // @Override
+    // @Transactional(readOnly = true)
+    // public Post retrievePostWithFiles(Long id){
+
+    //     Post post = postRepository.findPostWithFiles(id);
+    //     return entityToDto(post);
+        
+    // }
+
 }

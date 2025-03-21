@@ -39,6 +39,9 @@ public class FileItem {
     @Column(name = "f_file_extension")
     private String fileExtension;
 
+    @Column(name = "f_file_thumbnail_path")
+    private String thumbnailPath;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "f_post_id")
     private Post post;

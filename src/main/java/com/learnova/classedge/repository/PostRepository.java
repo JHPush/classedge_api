@@ -1,6 +1,7 @@
 package com.learnova.classedge.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +16,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, CustomPostRep
   @Query("SELECT p FROM Post p WHERE p.boardName = :boardName ORDER BY p.regDate DESC limit :limit")
   List<Post> findByBoardName(@Param("boardName") String boardName, @Param("limit") int limit);
 
-
+  @Query("SELECT p FROM Post p LEFT JOIN FETCH p.fileItems WHERE p.id = :id")
+  Post findPostWithFiles(@Param("id") Long id);
 
 
 }

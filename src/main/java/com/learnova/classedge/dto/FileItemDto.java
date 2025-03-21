@@ -22,6 +22,8 @@ public class FileItemDto {
 
     private String fileExtension;
 
+    private String thumbnailPath;
+
     private Long postId;
 
     private Long commentId;

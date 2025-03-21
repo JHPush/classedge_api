@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Post;
+import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
@@ -75,15 +79,17 @@ public class FileItemServiceImpl implements FileItemService{
         //파일 저장 경로
         Path savePath = Paths.get(uploadPath, fileName);   
 
+        Path thumbnailPath = null;
         try{
             Files.copy(file.getInputStream(), savePath);
 
             String contentType = file.getContentType();
+            
 
             //썸네일 생성
             if(contentType != null && contentType.startsWith("image")){ 
                 
-                Path thumbnailPath = Paths.get(uploadPath, "s_" + fileName);
+                thumbnailPath = Paths.get(uploadPath, "s_" + fileName);
                 Thumbnailator.createThumbnail(savePath.toFile(), thumbnailPath.toFile(), 200, 200);
             }
 
@@ -98,6 +104,7 @@ public class FileItemServiceImpl implements FileItemService{
             .fileExtension(getFileExtension(fileName))
             .comment(comment)
             .post(post)
+            .thumbnailPath(thumbnailPath != null ? thumbnailPath.toString() : null)
             .build();
 
         fileItemRepository.save(fileEntity);
@@ -111,9 +118,6 @@ public class FileItemServiceImpl implements FileItemService{
         int lastDotIndex = fileName.lastIndexOf('.');
         return lastDotIndex == -1 ? "" : fileName.substring(lastDotIndex + 1);
     }
-  
-
-
     
 
     //파일다운로드
@@ -124,13 +128,26 @@ public class FileItemServiceImpl implements FileItemService{
             .orElseThrow(() -> new ArticleNotFoundException("파일이 존재하지 않습니다. ID:" + id));
 
         String fileName = fileItem.getFileName(); 
-        Path filePath = Paths.get(uploadPath, fileName);
+        String thumbnailPath = fileItem.getThumbnailPath();
+      
+        //썸네일이 있을 경우
+        if(thumbnailPath !=null){
+
+            String thumbnailFilePath = thumbnailPath.startsWith(uploadPath) ? thumbnailPath : uploadPath + File.separator + thumbnailPath;
+
+            Path path = Paths.get(thumbnailFilePath);
+            Resource resource = new FileSystemResource(path);
+       
+            //파일을 못읽으면 default 이미지 반환
+            if(!resource.isReadable()){ 
+                resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
+            }
+            return resource;
+        }
         
+        Path filePath = Paths.get(uploadPath, fileName);
         Resource resource = new FileSystemResource(filePath);
 
-        if(!resource.isReadable()){ 
-            resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
-        }
         return resource;
         
     }

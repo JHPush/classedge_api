@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learnova.classedge.domain.MemberRole;
+import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
 import com.learnova.classedge.dto.PostSearchCondition;
+import com.learnova.classedge.service.FileItemService;
 import com.learnova.classedge.service.PostService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PostController {
 
     private final PostService postService;
+    
+    private final FileItemService fileItemService;
 
   
     // 게시글 목록조회 - 카테고리 별 http://localhost:8080/api/v1/posts?limit=5
@@ -74,9 +78,11 @@ public class PostController {
     }
 
     // 게시글 상세조회 http://localhost:8080/api/v1/posts/1	
-    @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostDto> getPost(@PathVariable("postId") Long id) {
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<PostDto> getPost(@PathVariable("id") Long id) {
+      
         PostDto postDto = postService.retrivePost(id);
+        
         return new ResponseEntity<>(postDto, HttpStatus.OK);
     }
 

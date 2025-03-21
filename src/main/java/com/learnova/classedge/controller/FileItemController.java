@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.service.FileItemService;
 
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -55,7 +58,19 @@ public class FileItemController {
         }
     }
 
-    //피일 다운로드
+    // //파일정보 조회
+    // @GetMapping
+    // public ResponseEntity<List<FileItemDto>> getFileInfo(
+    //     @RequestParam(value= "postId", required =false) Long postId,
+    //     @RequestParam(value= "commentId",required =false) Long commentId) {
+            
+    //     List<FileItemDto> fileItemDtos =fileItemService.getFileInfo(postId, commentId);
+
+    //     return ResponseEntity.ok(fileItemDtos);
+    // }
+    
+
+    //파일 다운로드
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> getFile(@PathVariable Long id) {
         Resource resource = fileItemService.downloadFile(id);

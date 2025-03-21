@@ -52,7 +52,7 @@ public class SecurityConfig {
 
         // 카카오 로그인 설정
         http.oauth2Login(conf->{
-            conf.loginPage("/api/v1/login/kakao");
+            conf.authorizationEndpoint().baseUri("/api/v1/login/kakao");
             conf.successHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
             conf.failureHandler(new ApiLoginFailureHandler());
         });

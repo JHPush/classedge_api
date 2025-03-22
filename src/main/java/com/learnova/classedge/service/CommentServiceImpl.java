@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService{
                 .content((String) result[1])
                 .regDate(result[2] != null ? ((Timestamp) result[2]).toLocalDateTime() : null)
                 .parent(result[3] != null ? (Long) result[3] : null)
-                .email((String) result[4])
+                .nickname((String) result[4])
                 .postId((Long) result[5])
                 .subComments(new ArrayList<>())
                 .level(((Number) result[6]).intValue())
@@ -96,7 +96,7 @@ public class CommentServiceImpl implements CommentService{
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ArticleNotFoundException("유효하지 않은 게시글입니다."));
 
-        Member member = memberManagementRepository.getMemberByEmail(commentDto.getEmail());
+        Member member = memberManagementRepository.getMemberByNickname(commentDto.getNickname());
         
         Comment comment = dtoToEntity(commentDto, post, member);
         

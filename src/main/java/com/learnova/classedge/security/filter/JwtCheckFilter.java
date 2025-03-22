@@ -43,6 +43,7 @@ public class JwtCheckFilter extends OncePerRequestFilter{
         String header = request.getHeader("Authorization");
         log.warn("token Header : {} ", header);
                 // 가끔 다른 형태의 값이 들어올때 예외처리
+
         String accessToken = (header.contains(" ")? header.split(" ")[1]: header); 
         
         Map<String, Object> claims = JwtUtil.validationToken(accessToken);

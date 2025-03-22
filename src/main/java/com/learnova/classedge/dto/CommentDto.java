@@ -28,7 +28,7 @@ public class CommentDto {
 
     private Long parent;
 
-    private String email;
+    private String nickname;
 
     private Long postId;
 

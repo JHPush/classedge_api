@@ -59,13 +59,13 @@ public class CommentController {
 
         MemberDto memberDto = (MemberDto) userDetails;
 
-        String email = memberDto.getEmail();
+        String nickname = memberDto.getNickname();
         String memberName = memberDto.getMemberName();
         
         Long postId = commentDto.getPostId();
         Long parentId = commentDto.getParent();
     
-        commentDto.setEmail(email);
+        commentDto.setNickname(nickname);
 
         log.info("commentDto: {}", commentDto);
         Long id = commentService.registerComment(commentDto);

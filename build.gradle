@@ -48,6 +48,9 @@ dependencies {
     // Gson
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     // 기본 설치 dependencies
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'

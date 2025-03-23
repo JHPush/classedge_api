@@ -73,17 +73,17 @@ public class MemberManagementService {
     // 새 사용자를 'PROFESSOR' 역할로 등록
     private Member registerNewProfessorMember(MemberDto memberDto) {
 
-        Member newProfessor = new Member(
-            memberDto.getEmail(), 
-            memberDto.getId(), 
-            memberDto.getMemberName(), 
-            passwordEncoder.encode(memberDto.getPassword()), 
-            memberDto.getIsWithdraw() != null ? memberDto.getIsWithdraw() : false, 
-            MemberRole.PROFESSOR, 
-            memberDto.getNickname(), 
-            memberDto.getLoginType()
-        );
-
+        Member newProfessor = Member.builder()
+                                        .email(memberDto.getEmail())
+                                        .id(memberDto.getId())
+                                        .memberName(memberDto.getMemberName())
+                                        .password(passwordEncoder.encode(memberDto.getPassword()))
+                                        .isWithdraw(memberDto.getIsWithdraw() != null ? memberDto.getIsWithdraw() : false)
+                                        .role(MemberRole.PROFESSOR)
+                                        .nickname(memberDto.getNickname())
+                                        .loginType(memberDto.getLoginType())
+                                        .build();    
+        
         return memberManagementRepository.save(newProfessor);
     }
 
@@ -100,9 +100,16 @@ public class MemberManagementService {
     // Entity -> DTO 변환
      Member dtoToMember(MemberDto dto){
 
-        Member member = new Member(dto.getEmail(), dto.getId(), dto.getMemberName()
-                                ,passwordEncoder.encode(dto.getPassword()) , dto.getIsWithdraw(), dto.getRole()
-                                , dto.getNickname(), dto.getLoginType());
+        Member member = Member.builder()
+                                    .email(dto.getEmail())
+                                    .id(dto.getId())
+                                    .memberName(dto.getMemberName())
+                                    .password(passwordEncoder.encode(dto.getPassword()))
+                                    .isWithdraw(dto.getIsWithdraw())
+                                    .role(dto.getRole())
+                                    .nickname(dto.getNickname())
+                                    .loginType(dto.getLoginType())
+                                    .build();
         return member;
     }
 }

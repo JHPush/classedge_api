@@ -36,7 +36,7 @@ public class PostRepositoryTest {
     @Rollback(false)
     public void testSave() {
         // given
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 20; i++) {
 
             Post post = new Post();
             post.changeTitle("p_id" + i);

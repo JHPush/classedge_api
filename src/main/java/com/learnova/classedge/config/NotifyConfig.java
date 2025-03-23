@@ -10,17 +10,19 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class NotifyConfig implements WebSocketMessageBrokerConfigurer{
 
-    // 클라가 api/v1/alert으로 보낸 요청 수신
+    // /app prefix -> @messagemapping 컨트롤러 처리후 /topic prefix를 통해 브로커에게 전달 -> STOMP MESSAGE 메소드로 구독자들에게 response
+    // /topic prefix -> 컨트롤러 안거치고 브로커에게 직접 접근
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/alert");
-        registry.setApplicationDestinationPrefixes("/api/v1");
+        registry.enableSimpleBroker("/api/v1/alert");
+        registry.setApplicationDestinationPrefixes("/app");
     }
 
     // /ws 경로로 클라와 웹소켓으로 연결
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS();
+
     }
 
     

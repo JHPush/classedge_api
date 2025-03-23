@@ -30,7 +30,7 @@ public class NotificationRepositoryTest {
     @Rollback(false)
     public void insertNotification(){
 
-        Member member = memberRepo.getMemberById("qnrn1");
+        Member member = memberRepo.getMemberById("qnrn0");
         for(int i=1; i<20; i++){
             Post post = postRepo.findById((long)i).orElseThrow();
             Notification notify = Notification.builder()

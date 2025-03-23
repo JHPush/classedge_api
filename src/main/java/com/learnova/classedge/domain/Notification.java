@@ -1,7 +1,9 @@
 package com.learnova.classedge.domain;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +38,8 @@ public class Notification {
     private boolean isRead;
     
     @Column(name = "n_reg_date")
-    private LocalDateTime regDate = LocalDateTime.now();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime regDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "n_email", referencedColumnName = "m_email", nullable = false, unique = false)
@@ -48,6 +51,6 @@ public class Notification {
 
     @PrePersist
     public void prePersist(){
-        this.regDate = (this.regDate == null)? LocalDateTime.now() : this.regDate;
+        this.regDate = (this.regDate == null)? LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS) : this.regDate;
     }
 }

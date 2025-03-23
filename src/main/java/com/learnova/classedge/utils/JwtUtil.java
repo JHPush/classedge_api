@@ -49,7 +49,7 @@ public class JwtUtil {
                                     .getBody();
 
         } catch (MalformedJwtException e) {
-            throw new CustomJwtException("Malformed Error, Check JWT Str");
+            throw new CustomJwtException("Malformed Error, Check JWT Str" + e);
         } catch(ExpiredJwtException e){
             throw new CustomJwtException("Expired Token");
         }catch(InvalidClaimException e){

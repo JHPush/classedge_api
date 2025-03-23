@@ -17,8 +17,12 @@ public interface NotificationService {
 
     default public NotificationDto entityToDto(Notification notify) {
         NotificationDto dto = NotificationDto.builder()
+                                                .id(notify.getId())
                                                 .email(notify.getMember().getEmail())
                                                 .content(notify.getContent())
+                                                .postId(notify.getPost().getId())
+                                                .regDate(notify.getRegDate())
+                                                .isRead(notify.isRead())
                                                 .build();
         return dto;
     }

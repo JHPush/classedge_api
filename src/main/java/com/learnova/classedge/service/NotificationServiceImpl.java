@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Notification;
 import com.learnova.classedge.domain.Post;
@@ -17,9 +18,11 @@ import com.learnova.classedge.repository.NotificationRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notifyRepo;
     private final SimpMessagingTemplate messagingTemplate;
@@ -29,31 +32,38 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public void createNotification(String email, String message, Long postId) {
-        Member member = memberRepo.findById(email).orElseThrow(()->new IllegalArgumentException("Do not Find member" + email));
-        Post post = postRepo.findById(postId).orElseThrow(()->new IllegalArgumentException("Do not Find post" + postId));
+        Member member = memberRepo.findById(email)
+                .orElseThrow(() -> new IllegalArgumentException("Do not Find member" + email));
+        Post post = postRepo.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Do not Find post" + postId));
         Notification notify = Notification.builder()
-                                            .member(member)
-                                            .isRead(false)
-                                            .post(post)
-                                            .content(message).build();
+                .member(member)
+                .isRead(false)
+                .post(post)
+                .content(message).build();
+
+        log.info("in notify Service imple");
         notifyRepo.save(notify);
 
-        // 실시간 전송 (클라구독주소)
-        messagingTemplate.convertAndSend("/topic/notifications/" + email, notify);
+        // 실시간 전송 (클라 구독주소)
+        try {
+            messagingTemplate.convertAndSend("/api/v1/alert/" + email, entityToDto(notify));
+            log.info("메시지 전송 ! : {}", notify.toString());
+        } catch (Exception e) {
+            log.error("메시지 전송 실패: {}", e.getMessage());
+        }
     }
+
     @Override
     public List<NotificationDto> getNotifications(String email, LocalDateTime since) {
         List<Notification> notifies = notifyRepo.findRecentNotification(email, since);
         return notifies.stream().map(this::entityToDto).collect(Collectors.toList());
     }
+
     @Override
     public Long getUnreadNotification(String email, LocalDateTime since) {
 
         return notifyRepo.countUnreadNotification(email, since);
     }
 
-    
-
-    
-    
 }

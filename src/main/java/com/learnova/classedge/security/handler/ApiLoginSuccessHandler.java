@@ -22,7 +22,7 @@ public class ApiLoginSuccessHandler implements AuthenticationSuccessHandler {
         
         MemberDto memberDto = (MemberDto)authentication.getPrincipal();
         Map<String, Object> claims = memberDto.getClaims();
-        String accessToken = JwtUtil.generateToken(claims, 10);
+        String accessToken = JwtUtil.generateToken(claims, 60);
         String refreshToken = JwtUtil.generateToken(claims, 60*24);
 
         claims.put("accessToken", accessToken);

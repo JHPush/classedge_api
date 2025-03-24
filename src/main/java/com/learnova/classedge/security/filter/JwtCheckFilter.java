@@ -24,18 +24,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class JwtCheckFilter extends OncePerRequestFilter{
+public class JwtCheckFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        
-        
+
         log.info("path!! : {}", path);
         // preflight 요청 - OPTIONS (리퀘스트 사전검증), /api/v1 경로로 오는 요청은 필터를 거치지 않음
-        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login") || path.startsWith("/api/v1/signup") || path.startsWith("/favicon.ico") 
-            || path.startsWith("/ws")
-        ){
+        if (request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login")
+                || path.startsWith("/api/v1/signup") || path.startsWith("/favicon.ico")
+                || path.startsWith("/ws") || path.startsWith("/api/v1/refresh")) {
             return true;
         }
         return false;
@@ -44,54 +43,49 @@ public class JwtCheckFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-        log.info("request : {}", request.getHeaderNames());
-
         String header = request.getHeader("Authorization");
         log.warn("token Header : {} ", header);
 
         // 가끔 다른 형태의 값이 들어올때 예외처리
-        String accessToken = (header.contains(" ")? header.split(" ")[1]: header); 
-        
-        Map<String, Object> claims = JwtUtil.validationToken(accessToken);
-        
+        String accessToken = (header.contains(" ") ? header.split(" ")[1] : header);
+
         try {
-            String email = (String)claims.get("email");
-            String id = (String)claims.get("id");
-            String name = (String)claims.get("memberName");
-            String password = (String)claims.get("password");
+            Map<String, Object> claims = JwtUtil.validationToken(accessToken);
+
+            String email = (String) claims.get("email");
+            String id = (String) claims.get("id");
+            String name = (String) claims.get("memberName");
+            String password = (String) claims.get("password");
             log.warn("password : {}", password);
-            Boolean isWithdraw = ((Boolean)claims.get("isWithdraw")); // Boolean.parseBoolean() 이용하면 코드 간소화 가능
+            Boolean isWithdraw = ((Boolean) claims.get("isWithdraw")); // Boolean.parseBoolean() 이용하면 코드 간소화 가능
             log.warn("isWithdraw : {}", isWithdraw);
-            
-            MemberRole role = MemberRole.valueOf((String)claims.get("role"));
-            String nickname = (String)claims.get("nickname");
-            LoginType loginType = LoginType.valueOf((String)claims.get("loginType"));
+
+            MemberRole role = MemberRole.valueOf((String) claims.get("role"));
+            String nickname = (String) claims.get("nickname");
+            LoginType loginType = LoginType.valueOf((String) claims.get("loginType"));
             log.warn("check parse : {} ", loginType);
-            MemberDto memberDto = new MemberDto(email, id, name
-                                                , password, isWithdraw, role
-                                                , nickname, loginType);
+            MemberDto memberDto = new MemberDto(email, id, name, password, isWithdraw, role, nickname, loginType);
             log.warn("check dto : {} ", memberDto);
-    
+
             // UsernamePasswordAuthenticationToken에 권한 추가
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(memberDto, memberDto.getPassword(), memberDto.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberDto,
+                    memberDto.getPassword(), memberDto.getAuthorities());
             log.warn("auth : {} ", authentication.toString());
-            
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.warn("context ");
 
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            if(cause instanceof AccessDeniedException){
-                throw (AccessDeniedException)cause;
+            if (cause instanceof AccessDeniedException) {
+                throw (AccessDeniedException) cause;
             }
             log.error("Error in JwtCheckFilter : {}", e);
-            
+
             // JWT 오류 시 에러 메시지 전송
             Gson gson = new Gson();
-            String jsonStr = gson.toJson(Map.of("error","ERROR_ACCESS_TOKEN"));
+            String jsonStr = gson.toJson(Map.of("error", "ERROR_ACCESS_TOKEN"));
             response.setContentType("application/json; charset=UTF-8");
             PrintWriter pWriter = response.getWriter();
             pWriter.println(jsonStr);
@@ -99,5 +93,5 @@ public class JwtCheckFilter extends OncePerRequestFilter{
         }
 
     }
-    
+
 }

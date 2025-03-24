@@ -40,9 +40,9 @@ public class CommentController {
 
     //댓글 목록 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<List<CommentDto>> getComment(@PathVariable("postId") Long postId){
+    public ResponseEntity<List<CommentDto>> getComment(@PathVariable("postId") Long postId, Long id){
 
-        List<CommentDto> commentList = commentService.retrieveComment(postId);
+        List<CommentDto> commentList = commentService.retrieveComment(postId, id);
 
         if (commentList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 댓글 없으면 204

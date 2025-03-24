@@ -47,8 +47,9 @@ public class CommentServiceImpl implements CommentService{
     //댓글 조회
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDto> retrieveComment(Long postId){
+    public List<CommentDto> retrieveComment(Long postId, Long id){
     
+        Comment comment = commentRepository.findCommentWithFiles(id);
         List<Object[]> results = commentRepository.findByPostId(postId);
 
         Map<Long, CommentDto> commentMap= new HashMap<>();
@@ -70,13 +71,13 @@ public class CommentServiceImpl implements CommentService{
 
         List<CommentDto> parentComments = new ArrayList<>();
 
-        for(CommentDto comment : commentMap.values()){
-            if(comment.getParent() ==null){
-                parentComments.add(comment);                       //부모댓글일 경우 댓글 추가
+        for(CommentDto commentDto : commentMap.values()){
+            if(commentDto.getParent() ==null){
+                parentComments.add(commentDto);                       //부모댓글일 경우 댓글 추가
 
             }else {
-                CommentDto parentComment = commentMap.get(comment.getParent());
-                parentComment.getSubComments().add(comment);       //답글일 경우 
+                CommentDto parentComment = commentMap.get(commentDto.getParent());
+                parentComment.getSubComments().add(commentDto);       //답글일 경우 
             }
         }
         return parentComments;

@@ -36,5 +36,7 @@ public class CommentDto {
 
     private List<CommentDto> subComments = new ArrayList<>();
 
+    private List<FileItemDto> fileItems = new ArrayList<>();
+
     
 }

@@ -6,14 +6,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.learnova.classedge.domain.Comment;
+import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
+import com.learnova.classedge.dto.FileItemDto;
 
 public interface CommentService {
 
     //댓글 목록 조회
-    List<CommentDto> retrieveComment(Long postId);
+    List<CommentDto> retrieveComment(Long postId, Long id);
 
     //댓글 등록
     Long registerComment(CommentDto commentDto);
@@ -43,6 +45,12 @@ public interface CommentService {
     //Entity -> Dto
     default CommentDto entityToDto(Comment comment){
 
+        List<FileItem> fileItmes = comment.getFileItems();
+        List<FileItemDto> fileItemDtos = new ArrayList<>();
+        for(FileItem fileItem : fileItmes){
+            fileItemDtos.add(dtoToEntity1(fileItem));
+        }
+
         return CommentDto.builder()
             .id(comment.getId())
             .content(comment.getContent())
@@ -52,6 +60,7 @@ public interface CommentService {
             .nickname(comment.getMember().getNickname())
             .postId(comment.getPost().getId())
             .level(comment.getLevel())
+            .fileItems(fileItemDtos)
             .build();
             
     }
@@ -64,4 +73,27 @@ public interface CommentService {
     }
 
 
+
+    default FileItemDto dtoToEntity1 (FileItem fileItem) {
+        return FileItemDto.builder()
+            .id(fileItem.getId())
+            .fileName(fileItem.getFileName())
+            .filePath(fileItem.getFilePath())
+            .fileSize(fileItem.getFileSize())
+            .fileExtension(fileItem.getFileExtension())
+            .thumbnailPath(fileItem.getThumbnailPath())
+            .build();
+        
+    }
+
+    default FileItem entityToDto1(FileItemDto dto) {
+        return FileItem.builder()
+            .id(dto.getId())
+            .fileName(dto.getFileName())
+            .filePath(dto.getFilePath())
+            .fileSize(dto.getFileSize())
+            .fileExtension(dto.getFileExtension())
+            .thumbnailPath(dto.getThumbnailPath())
+            .build();
+    }
 }

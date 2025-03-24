@@ -57,16 +57,20 @@ public class PostController {
     // 게시글 등록 http://localhost:8080/api/v1/posts/register	
     @PostMapping("/posts/register")
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR', 'ROLE_ADMIN')")
+
+    
     public ResponseEntity<Map<String, Long>> postPost(
             @RequestBody PostDto postDto, 
             @AuthenticationPrincipal UserDetails userDetails) {
+                
+        MemberDto memberDto = (MemberDto)userDetails;
 
-        MemberDto dto = (MemberDto)userDetails;
-
-        String email = dto.getEmail();
-        String memberName = dto.getMemberName();
-        MemberRole role  = dto.getRole();
+        String nickname = memberDto.getNickname();
+        String memberName = memberDto.getMemberName();
+        MemberRole role  = memberDto.getRole();
    
+        postDto.setNickname(nickname);
+        log.info("postDto: {}", postDto);
         Long id = postService.registerPost(postDto);
         log.info("id : {}", id);
 

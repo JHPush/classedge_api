@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
+import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
@@ -22,6 +23,7 @@ import com.learnova.classedge.dto.PostSearchCondition;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
+import com.learnova.classedge.repository.MemberManagementRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final FileItemRepository fileItemRepository;
+    private final MemberManagementRepository memberManagementRepository;
 
     @Autowired
     private FileItemService fileItemService;
@@ -74,9 +77,13 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = false)
     @Override
     public Long registerPost(PostDto postDto) {
-        Post post = dtoToEntity(postDto);
+        
+        Member member = memberManagementRepository.getMemberByNickname(postDto.getNickname());
+        Post post = dtoToEntity(postDto, member);
+        log.info("post:{}", post);
         postRepository.save(post);
         return post.getId();
+        
     }
 
     // 게시글 상세조회

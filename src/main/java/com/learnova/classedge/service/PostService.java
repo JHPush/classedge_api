@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.learnova.classedge.domain.FileItem;
+import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.dto.PageRequestDto;
@@ -24,20 +25,18 @@ public interface PostService {
     PostDto retrivePost(Long id); // 상세조회
     void removePost(Long postId); // 삭제
     void modifyPost(PostDto postDto); // 수정
-   // Post retrievePostWithFiles(Long id); //게시글에 첨부된 파일 조회
-
-    
 
     
 
 
     // PostDto => Post 엔티티 변환
-    default Post dtoToEntity(final PostDto dto) {
+    default Post dtoToEntity(final PostDto dto, Member member) {
 
         return Post.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
-                .contents(dto.getContents())               
+                .contents(dto.getContents())  
+                .member(member)             
                 .regDate(dto.getRegDate())
                 .lmiDate(dto.getLmiDate())
                 .boardName(dto.getBoardName())
@@ -57,7 +56,8 @@ public interface PostService {
         return PostDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
-                .contents(post.getContents())              
+                .contents(post.getContents())   
+                .nickname(post.getMember().getNickname())           
                 .regDate(post.getRegDate())
                 .lmiDate(post.getLmiDate())
                 .boardName(post.getBoardName())

@@ -60,6 +60,7 @@ public class Comment {
     @JsonIgnore
     private List<Comment> subComments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "comment")
     private List<FileItem> fileItems = new ArrayList<>();
 

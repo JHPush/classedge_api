@@ -15,7 +15,7 @@ import com.learnova.classedge.dto.FileItemDto;
 public interface CommentService {
 
     //댓글 목록 조회
-    List<CommentDto> retrieveComment(Long postId, Long id);
+    List<CommentDto> retrieveComment(Long postId);
 
     //댓글 등록
     Long registerComment(CommentDto commentDto);

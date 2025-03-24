@@ -57,17 +57,6 @@ public class FileItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드 실패: " + e.getMessage());
         }
     }
-
-    // //파일정보 조회
-    // @GetMapping
-    // public ResponseEntity<List<FileItemDto>> getFileInfo(
-    //     @RequestParam(value= "postId", required =false) Long postId,
-    //     @RequestParam(value= "commentId",required =false) Long commentId) {
-            
-    //     List<FileItemDto> fileItemDtos =fileItemService.getFileInfo(postId, commentId);
-
-    //     return ResponseEntity.ok(fileItemDtos);
-    // }
     
 
     //파일 다운로드

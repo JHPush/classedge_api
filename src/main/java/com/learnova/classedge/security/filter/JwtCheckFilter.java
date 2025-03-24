@@ -46,9 +46,10 @@ public class JwtCheckFilter extends OncePerRequestFilter{
 
         String accessToken = (header.contains(" ")? header.split(" ")[1]: header); 
         
-        Map<String, Object> claims = JwtUtil.validationToken(accessToken);
     
         try {
+        Map<String, Object> claims = JwtUtil.validationToken(accessToken);
+
             String email = (String)claims.get("email");
             String id = (String)claims.get("id");
             String memberName = (String)claims.get("memberName");

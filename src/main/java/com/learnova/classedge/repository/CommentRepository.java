@@ -49,7 +49,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     int countByPostId(Long postId);
 
-    @Query("SELECT c FROM Comment c LEFT JOIN FETCH c.fileItems WHERE c.id = :id")
-    Comment findCommentWithFiles(@Param("id") Long id);
+    @Query("SELECT DISTINCT c FROM Comment c LEFT JOIN FETCH c.fileItems WHERE c.post.id = :postId")
+    List<Comment> findCommentWithFiles(@Param("postId") Long postId);
     
 }

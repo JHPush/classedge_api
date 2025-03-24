@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
+import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
@@ -47,41 +49,67 @@ public class CommentServiceImpl implements CommentService{
     //댓글 조회
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDto> retrieveComment(Long postId, Long id){
+    public List<CommentDto> retrieveComment(Long postId){
     
-        Comment comment = commentRepository.findCommentWithFiles(id);
-        List<Object[]> results = commentRepository.findByPostId(postId);
+        List<Comment> comments = commentRepository.findCommentWithFiles(postId);       
+    
+        List<CommentDto> commentDtos = new ArrayList<>();
+        Map<Long, CommentDto> commentMap = new HashMap<>();
 
-        Map<Long, CommentDto> commentMap= new HashMap<>();
-        
-        for(Object[] result : results){
-            CommentDto dto = CommentDto.builder()
-                .id((Long) result[0])
-                .content((String) result[1])
-                .regDate(result[2] != null ? ((Timestamp) result[2]).toLocalDateTime() : null)
-                .parent(result[3] != null ? (Long) result[3] : null)
-                .nickname((String) result[4])
-                .postId((Long) result[5])
-                .subComments(new ArrayList<>())
-                .level(((Number) result[6]).intValue())
-                .build();
-
-                commentMap.put(dto.getId(), dto);
+        for (Comment comment : comments) {
+            CommentDto commentDto = entityToDto(comment);
+           
+            if (!comment.getFileItems().isEmpty()) {            
+                for (FileItem fileItem : comment.getFileItems()) {
+                    commentDto.addFileItems(dtoToEntity1(fileItem));
+                }
+            }
+            commentMap.put(commentDto.getId(), commentDto);
         }
 
-        List<CommentDto> parentComments = new ArrayList<>();
+        
 
         for(CommentDto commentDto : commentMap.values()){
             if(commentDto.getParent() ==null){
-                parentComments.add(commentDto);                       //부모댓글일 경우 댓글 추가
-
+                commentDtos.add(commentDto);                       //부모댓글일 경우 댓글 추가
             }else {
                 CommentDto parentComment = commentMap.get(commentDto.getParent());
                 parentComment.getSubComments().add(commentDto);       //답글일 경우 
             }
         }
-        return parentComments;
+        
+        return commentDtos;
     }
+
+        // List<Object[]> results = commentRepository.findByPostId(postId);
+    
+        // Map<Long, CommentDto> commentMap= new HashMap<>();
+        
+        // for(Object[] result : results){
+        //     CommentDto dto = CommentDto.builder()
+        //         .id((Long) result[0])
+        //         .content((String) result[1])
+        //         .regDate(result[2] != null ? ((Timestamp) result[2]).toLocalDateTime() : null)
+        //         .parent(result[3] != null ? (Long) result[3] : null)
+        //         .nickname((String) result[4])
+        //         .postId((Long) result[5])
+        //         .subComments(new ArrayList<>())
+        //         .level(((Number) result[6]).intValue())
+        //         .fileItems( new ArrayList<>())
+        //         .build();
+        //     log.info("fileitem: {}", dto.getFileItems());
+             
+                //  commentMap.put(commentDto.getId(), commentDto);
+
+        // }
+
+        
+        // List<CommentDto> parentComments = new ArrayList<>();
+
+      
+       
+    //     return commentDtos;
+    //  }
 
 
 

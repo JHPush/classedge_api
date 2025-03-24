@@ -38,5 +38,9 @@ public class CommentDto {
 
     private List<FileItemDto> fileItems = new ArrayList<>();
 
+    public void addFileItems (FileItemDto fileItemDto){
+        fileItems.add(fileItemDto);
+    }
+
     
 }

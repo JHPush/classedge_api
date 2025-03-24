@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learnova.classedge.dto.NotificationDto;
@@ -27,8 +28,8 @@ public class NotificationController {
     private final NotificationService notifyService;
 
     // 최근 14일 조회
-    @GetMapping("/{email}")
-    public ResponseEntity<List<NotificationDto>> notifications(@PathVariable String email){
+    @GetMapping()
+    public ResponseEntity<List<NotificationDto>> notifications(@RequestParam String email){
         log.info("in controller : {} ", email);
         return new ResponseEntity<>(notifyService.getNotifications(email, LocalDateTime.now().minusDays(14)),HttpStatus.OK);
     }
@@ -41,13 +42,13 @@ public class NotificationController {
     }
 
     // 안읽은 알람 갯수 리턴 (현재 리액트자체 처리)
-    @GetMapping("/{email}/unread-count")
-    public Long getUnreadCount(@PathVariable String email){
+    @GetMapping("/unread-count")
+    public Long getUnreadCount(@RequestParam String email){
         return notifyService.getUnreadNotification(email, LocalDateTime.now().minusDays(14));
     }
 
-    @PutMapping("/{email}")
-    public ResponseEntity<Long> putNotification(@PathVariable String email){
+    @PutMapping()
+    public ResponseEntity<Long> putNotification(@RequestParam String email){
         return new ResponseEntity<>(notifyService.updateNotificaiton(email), HttpStatus.ACCEPTED);
     }
 

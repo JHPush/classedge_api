@@ -36,12 +36,12 @@ public class PostRepositoryTest {
     @Rollback(false)
     public void testSave() {
         // given
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 2; i++) {
 
             Post post = new Post();
             post.changeTitle("p_id" + i);
             post.changeContents("p_contents" + i);
-            post.changeEmail("p_email" + i);
+        
             post.changeRegDate(LocalDateTime.now());
             if (i % 2 == 0) {
                 post.changeBoardName("NOTICE");

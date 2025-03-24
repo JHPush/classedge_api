@@ -66,10 +66,7 @@ public class PostController {
         String email = dto.getEmail();
         String memberName = dto.getMemberName();
         MemberRole role  = dto.getRole();
-
-       
-        postDto.setEmail(email);
-
+   
         Long id = postService.registerPost(postDto);
         log.info("id : {}", id);
 

@@ -26,7 +26,7 @@ public class PostDto {
 
     private String contents;
 
-    private String email;
+    private String nickname;
 
     private LocalDateTime regDate;
 

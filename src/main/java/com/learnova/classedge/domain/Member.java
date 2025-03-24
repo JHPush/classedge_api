@@ -1,7 +1,9 @@
 package com.learnova.classedge.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +13,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -19,6 +24,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.bytebuddy.dynamic.TypeResolutionStrategy.Lazy;
 
 
 @Builder
@@ -57,12 +63,31 @@ public class Member {
     @Column(name = "m_login_type")
     private LoginType loginType; // 로그인 방식[일반, 카카오]
 
+    
+
+    public Member(String email, String id, String memberName, String password, Boolean isWithdraw, MemberRole role,
+            String nickname, LoginType loginType) {
+        this.email = email;
+        this.id = id;
+        this.memberName = memberName;
+        this.password = password;
+        this.isWithdraw = isWithdraw;
+        this.role = role;
+        this.nickname = nickname;
+        this.loginType = loginType;
+    }
+
+
     @PrePersist
     public void prePersist() {
         if (this.isWithdraw == null) {
             this.isWithdraw = false; // 기본값 설정
         }
     }
+
+       
+    @OneToMany(mappedBy = "member", fetch=FetchType.LAZY )
+    private List<Post> posts = new ArrayList<>();
 
 
     // 사용자에게 역할 부여

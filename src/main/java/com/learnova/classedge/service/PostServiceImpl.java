@@ -1,5 +1,6 @@
 package com.learnova.classedge.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +25,10 @@ import com.learnova.classedge.repository.FileItemRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -50,10 +54,19 @@ public class PostServiceImpl implements PostService {
     // 게시글 목록조회
     @Override
     public List<PostDto> retrievePostList(String boardName, int limit) {
-        List<Post> result = postRepository.findByBoardName(boardName, limit);
-        List<PostDto> postDtoList = result.stream()
-                .map(this::entityToDto)
-                .collect(Collectors.toList());
+        
+        List<Post> result = postRepository.findByBoardName(boardName, limit);       
+        
+        List<PostDto> postDtoList = new ArrayList<>();
+        for (Post post : result) {           
+            PostDto postDto = entityToDto(post);
+            postDto.setNickname(post.getMember().getNickname());
+            postDto.setCommentCount(commentRepository.countByPostId(post.getId()));
+            postDtoList.add(postDto);
+        }
+
+        log.info("postDtoList : {}", postDtoList);
+
         return postDtoList;
     }
 
@@ -113,8 +126,7 @@ public class PostServiceImpl implements PostService {
         Optional<Post> result = postRepository.findById(postDto.getId());
         Post post = result.orElseThrow();
         post.changeTitle(postDto.getTitle());
-        post.changeContents(postDto.getContents());
-        post.changeEmail(postDto.getEmail());
+        post.changeContents(postDto.getContents());    
         post.changeRegDate(postDto.getRegDate());
         post.setLmiDate(postDto.getLmiDate());
         post.changeBoardName(postDto.getBoardName());

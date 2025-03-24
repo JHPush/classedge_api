@@ -67,16 +67,20 @@ public class JwtCheckFilter extends OncePerRequestFilter{
             MemberRole role = MemberRole.valueOf((String)claims.get("role"));
             String nickname = (String)claims.get("nickname");
             LoginType loginType = LoginType.valueOf((String)claims.get("loginType"));
-    
+            log.warn("check parse : {} ", loginType);
             MemberDto memberDto = new MemberDto(email, id, name
                                                 , password, isWithdraw, role
                                                 , nickname, loginType);
+            log.warn("check dto : {} ", memberDto);
     
             // UsernamePasswordAuthenticationToken에 권한 추가
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(memberDto, memberDto.getPassword(), memberDto.getAuthorities());
+            log.warn("auth : {} ", authentication.toString());
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.warn("context ");
+
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             Throwable cause = e.getCause();

@@ -17,6 +17,7 @@ import lombok.ToString;
 public class NotificationDto {
     private Long id;
     private String email;
+    private String memberName;
     private String content;
     private Long postId;
     private LocalDateTime regDate;

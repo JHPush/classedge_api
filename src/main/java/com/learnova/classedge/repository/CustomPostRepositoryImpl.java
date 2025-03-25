@@ -76,6 +76,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 .select(post)
                 .from(post)
                 .where(
+                    nicknameLike(condition.getNickname()),
                         contentsLike(condition.getContents()),
                         titleLike(condition.getTitle()),
                         boardNameEq(condition.getBoardName()))
@@ -90,8 +91,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
           .select(post)
           .from(post)
           .where(
-                  contentsLike(condition.getContents()),
-                  titleLike(condition.getTitle()))
+                    nicknameLike(condition.getNickname()),
+                    contentsLike(condition.getContents()),
+                  titleLike(condition.getTitle()),
+                  boardNameEq(condition.getBoardName())
+                  )
           .fetchCount();
             
 
@@ -113,11 +117,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     }
 
-    // private BooleanExpression emailLike(String email) {
+    private BooleanExpression nicknameLike(String nickname) {
 
-    //     return email == null ? null : post.email.like("%" + email + "%");
+        return nickname == null ? null : post.member.nickname.like("%" + nickname + "%");
 
-    // }
+    }
 
     private BooleanExpression contentsLike(String contents) {
 

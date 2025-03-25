@@ -37,7 +37,7 @@ public class PostDto {
 
     private List<FileItemDto> fileItems = new ArrayList<>();
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    // @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int commentCount;  
     
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)

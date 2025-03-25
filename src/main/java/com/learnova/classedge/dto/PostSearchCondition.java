@@ -11,7 +11,7 @@ public class PostSearchCondition {
     
     private String contents;
 
-    private String email;
+    private String nickname;
 
     private String boardName;
 

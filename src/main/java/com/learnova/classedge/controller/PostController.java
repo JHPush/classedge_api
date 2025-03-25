@@ -61,7 +61,7 @@ public class PostController {
     
     public ResponseEntity<Map<String, Long>> postPost(
             @RequestBody PostDto postDto, 
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal UserDetails userDetails, List<Long> fileIds) {
                 
         MemberDto memberDto = (MemberDto)userDetails;
 
@@ -71,7 +71,7 @@ public class PostController {
    
         postDto.setNickname(nickname);
         log.info("postDto: {}", postDto);
-        Long id = postService.registerPost(postDto);
+        Long id = postService.registerPost(postDto, fileIds);
         log.info("id : {}", id);
 
         return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);

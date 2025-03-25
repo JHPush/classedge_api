@@ -76,12 +76,19 @@ public class PostServiceImpl implements PostService {
     // 게시글 등록
     @Transactional(readOnly = false)
     @Override
-    public Long registerPost(PostDto postDto) {
+    public Long registerPost(PostDto postDto, List<Long> fileIds) {
         
         Member member = memberManagementRepository.getMemberByNickname(postDto.getNickname());
         Post post = dtoToEntity(postDto, member);
         log.info("post:{}", post);
         postRepository.save(post);
+
+        if (fileIds != null && !fileIds.isEmpty()) {
+            List<FileItem> files = fileItemRepository.findAllById(fileIds);
+            for (FileItem file : files) {
+                file.setPost(post); 
+            }
+        }
         return post.getId();
         
     }

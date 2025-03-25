@@ -22,5 +22,8 @@ public interface FileItemRepository extends JpaRepository<FileItem, Long> {
     List<FileItem> findByCommentId(Long commentId);
 
     void deleteAllByCommentId(Long commentId);
+
+
+
     
 }

@@ -59,57 +59,21 @@ public class CommentServiceImpl implements CommentService{
         for (Comment comment : comments) {
             CommentDto commentDto = entityToDto(comment);
            
-            if (!comment.getFileItems().isEmpty()) {            
-                for (FileItem fileItem : comment.getFileItems()) {
-                    commentDto.addFileItems(dtoToEntity1(fileItem));
-                }
-            }
-            commentMap.put(commentDto.getId(), commentDto);
+          commentMap.put(commentDto.getId(), commentDto);
         }
 
-        
 
         for(CommentDto commentDto : commentMap.values()){
             if(commentDto.getParent() ==null){
-                commentDtos.add(commentDto);                       //부모댓글일 경우 댓글 추가
-            }else {
-                CommentDto parentComment = commentMap.get(commentDto.getParent());
-                parentComment.getSubComments().add(commentDto);       //답글일 경우 
-            }
-        }
+                commentDtos.add(commentDto);               
+    
+          }
+         }
         
         return commentDtos;
     }
 
-        // List<Object[]> results = commentRepository.findByPostId(postId);
-    
-        // Map<Long, CommentDto> commentMap= new HashMap<>();
         
-        // for(Object[] result : results){
-        //     CommentDto dto = CommentDto.builder()
-        //         .id((Long) result[0])
-        //         .content((String) result[1])
-        //         .regDate(result[2] != null ? ((Timestamp) result[2]).toLocalDateTime() : null)
-        //         .parent(result[3] != null ? (Long) result[3] : null)
-        //         .nickname((String) result[4])
-        //         .postId((Long) result[5])
-        //         .subComments(new ArrayList<>())
-        //         .level(((Number) result[6]).intValue())
-        //         .fileItems( new ArrayList<>())
-        //         .build();
-        //     log.info("fileitem: {}", dto.getFileItems());
-             
-                //  commentMap.put(commentDto.getId(), commentDto);
-
-        // }
-
-        
-        // List<CommentDto> parentComments = new ArrayList<>();
-
-      
-       
-    //     return commentDtos;
-    //  }
 
 
 

@@ -16,7 +16,7 @@ public interface FileItemService {
 
 
     //파일업로드,썸네일
-    public void uploadFile(MultipartFile file, Long postId, Long commentId);
+    public Long uploadFile(MultipartFile file);
 
     // //파일정보조회
     // public List<FileItemDto> getFileInfo(Long postId, Long commentId);

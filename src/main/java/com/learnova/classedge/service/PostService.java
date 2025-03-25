@@ -21,7 +21,7 @@ public interface PostService {
     List<PostDto> retrievePostList(); // 목록조회
     List<PostDto> retrievePostList(String boardName, int limit); // 과제/공지 5개 글
     PageResponseDto<PostDto> paging(PostSearchCondition condition,PageRequestDto pageRequestDto);     // 검색, 페이징 처리
-    Long registerPost(PostDto postDto); // 작성
+    public Long registerPost(PostDto postDto, List<Long> fileIds); // 작성
     PostDto retrivePost(Long id); // 상세조회
     void removePost(Long postId); // 삭제
     void modifyPost(PostDto postDto); // 수정

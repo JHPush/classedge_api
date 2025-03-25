@@ -36,20 +36,18 @@ public class FileItemController {
     //파일업로드 
     @PostMapping("/upload")
     public ResponseEntity<String> postFile(
-        @RequestParam("file") MultipartFile file, 
-        @RequestParam(value= "postId", required =false) Long postId,
-        @RequestParam(value= "commentId",required =false) Long commentId) {
+        @RequestParam("file") MultipartFile file) {
     
-        if(postId !=null && commentId !=null){ 
-            return ResponseEntity.badRequest().body("게시글 ID와 댓글 ID는 동시에 입력할 수 없습니다.");
-        }
+        // if(postId !=null && commentId !=null){ 
+        //     return ResponseEntity.badRequest().body("게시글 ID와 댓글 ID는 동시에 입력할 수 없습니다.");
+        // }
 
-        if(postId == null && commentId == null){ 
-            return ResponseEntity.badRequest().body("게시글 ID 또는 댓글 ID를 입력해 주세요. 둘 중 하나는 반드시 필요합니다");
-        }
+        // if(postId == null && commentId == null){ 
+        //     return ResponseEntity.badRequest().body("게시글 ID 또는 댓글 ID를 입력해 주세요. 둘 중 하나는 반드시 필요합니다");
+        // }
     
         try{ 
-            fileItemService.uploadFile(file, postId, commentId);
+            fileItemService.uploadFile(file);
             return ResponseEntity.ok("파일 업로드 성공");
 
         }catch(Exception e){ 

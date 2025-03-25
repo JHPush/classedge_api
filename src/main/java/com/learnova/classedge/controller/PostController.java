@@ -59,7 +59,7 @@ public class PostController {
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR', 'ROLE_ADMIN')")
     public ResponseEntity<Map<String, Long>> postPost(
             @RequestBody PostDto postDto, 
-            @AuthenticationPrincipal UserDetails userDetails, List<Long> fileIds) {
+            @AuthenticationPrincipal UserDetails userDetails) {
                 
         MemberDto memberDto = (MemberDto)userDetails;
 
@@ -69,7 +69,7 @@ public class PostController {
    
         postDto.setNickname(nickname);
         log.info("postDto: {}", postDto);
-        Long id = postService.registerPost(postDto, fileIds);
+        Long id = postService.registerPost(postDto);
         log.info("id : {}", id);
 
         return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);

@@ -59,20 +59,21 @@ public class FileItemServiceImpl implements FileItemService{
 
     //파일업로드
     @Override
-    public Long uploadFile(MultipartFile file) {
-      
-        // Post post = null;
-        // Comment comment= null;
+    public List<Long> uploadFile(List<MultipartFile> files, Long postId, Long commentId) {
+        List<Long> fileIds = new ArrayList<>(); 
+        Post post = null;
+        Comment comment= null;
 
-        // if(postId != null){ 
-        //     post = postRepository.findById(postId)
-        //     .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id:" +postId));
-        // }
-        // if(commentId !=null){ 
-        //      comment = commentRepository.findById(commentId)
-        //     .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. id:" + commentId ));
-        // }
+        if(postId != null){ 
+            post = postRepository.findById(postId)
+            .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id:" +postId));
+        }
+        if(commentId !=null){ 
+             comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. id:" + commentId ));
+        }
 
+        for (MultipartFile file : files) {
         //파일명 생성
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         
@@ -102,13 +103,15 @@ public class FileItemServiceImpl implements FileItemService{
             .fileSize(file.getSize())
             .fileName(fileName)
             .fileExtension(getFileExtension(fileName))
-            // .comment(comment)
-            // .post(post)
+            .comment(comment)
+            .post(post)
             .thumbnailPath(thumbnailPath != null ? thumbnailPath.toString() : null)
             .build();
 
-        fileItemRepository.save(fileEntity);
-        return fileEntity.getId();
+        FileItem savedFile = fileItemRepository.save(fileEntity);
+        fileIds.add(savedFile.getId());
+    }
+        return fileIds;
     }
 
 

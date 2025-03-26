@@ -1,19 +1,27 @@
 package com.learnova.classedge.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.learnova.classedge.dto.CommentDto;
+import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.service.CommentService;
+import com.learnova.classedge.service.FileItemService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,38 +38,56 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class CommentController {
 
     private final CommentService commentService;
-
+    private final FileItemService fileItemService;
 
 
     //댓글 목록 조회
     @GetMapping("/{postId}")
     public ResponseEntity<List<CommentDto>> getComment(@PathVariable("postId") Long postId){
 
-        List<CommentDto> commentList = commentService.retrieveComment(postId);
-
-        if (commentList.isEmpty()) {
+        List<CommentDto> commentDto = commentService.retrieveComment(postId);
+        if (commentDto.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 댓글 없으면 204
         }
 
-        return new ResponseEntity<>(commentList, HttpStatus.OK);
+        return new ResponseEntity<>(commentDto, HttpStatus.OK);
     }
 
     //댓글등록
-    @PostMapping
-    public ResponseEntity<Map<String, Long>> postComment(
-        @RequestBody CommentDto commentDto, 
-        @RequestParam(value = "post") Long postId, 
-        @RequestParam(value="parent", required = false) Long parentId) {
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, Object>> postComment(
+        @RequestPart("commentDto") CommentDto commentDto,
+        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+        @AuthenticationPrincipal UserDetails userDetails) {
 
-        commentDto.setPostId(postId);
-        commentDto.setParent(parentId);
-         
-        Long id = commentService.registerComment(commentDto, postId, parentId);
+        MemberDto memberDto = (MemberDto) userDetails;
 
-        log.info("id: {}, postId: {}, parentId: {}", id, postId, parentId);
+        String nickname = memberDto.getNickname();
+        String memberName = memberDto.getMemberName();
         
-       
-        return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
+        Long postId = commentDto.getPostId();
+        Long parentId = commentDto.getParent();
+    
+        commentDto.setNickname(nickname);
+
+        log.info("commentDto: {}", commentDto);
+        Long id = commentService.registerComment(commentDto);
+        if(files!=null &&files.size()>0){
+            try {
+                List<Long> fileIds = fileItemService.uploadFile(files, null, id);
+                log.info("file register success : {} ", fileIds.size());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", id);
+        response.put("memberName", memberName);
+
+        log.info("id: {}, postId: {}, parentId: {}, memberName: {}", id, postId, parentId, memberName);
+        
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
      //댓글삭제

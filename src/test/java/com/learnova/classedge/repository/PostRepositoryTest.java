@@ -41,7 +41,7 @@ public class PostRepositoryTest {
             Post post = new Post();
             post.changeTitle("p_id" + i);
             post.changeContents("p_contents" + i);
-            post.changeWriter("p_writer" + i);
+        
             post.changeRegDate(LocalDateTime.now());
             if (i % 2 == 0) {
                 post.changeBoardName("NOTICE");

@@ -28,13 +28,19 @@ public class CommentDto {
 
     private Long parent;
 
-    private String email;
+    private String nickname;
 
     private Long postId;
 
     private Integer level = 0;
 
     private List<CommentDto> subComments = new ArrayList<>();
+
+    private List<FileItemDto> fileItems = new ArrayList<>();
+
+    public void addFileItems (FileItemDto fileItemDto){
+        fileItems.add(fileItemDto);
+    }
 
     
 }

@@ -10,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -41,9 +43,6 @@ public class Post {
     @Column(name = "p_content")
     private String contents;
 
-    @Column(name = "p_writer")
-    private String writer;
-
     @Column(name = "p_reg_date")
     private LocalDateTime regDate = LocalDateTime.now();
 
@@ -56,11 +55,16 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<FileItem> fileItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<Notification> notifications = new ArrayList<>();
+    
+    @ManyToOne
+    @JoinColumn(name = "p_email")
+    private Member member;
 
     @Transient
     private int commentCount;
@@ -93,9 +97,6 @@ public class Post {
         this.contents = contents;
     }
 
-    public void changeWriter(String writer) {
-        this.writer = writer;
-    }
 
     public void changeRegDate(LocalDateTime regDate) {
         this.regDate = regDate;

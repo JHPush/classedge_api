@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
+import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.CommentDto;
+import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
+import com.learnova.classedge.repository.MemberManagementRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.Getter;
@@ -35,6 +39,7 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final FileItemRepository fileItemRepository;
+    private final MemberManagementRepository memberManagementRepository;
 
     @Autowired
     private FileItemService fileItemService;
@@ -46,38 +51,29 @@ public class CommentServiceImpl implements CommentService{
     @Transactional(readOnly = true)
     public List<CommentDto> retrieveComment(Long postId){
     
-        List<Object[]> results = commentRepository.findByPostId(postId);
+        List<Comment> comments = commentRepository.findCommentWithFiles(postId);       
+    
+        List<CommentDto> commentDtos = new ArrayList<>();
+        Map<Long, CommentDto> commentMap = new HashMap<>();
 
-        Map<Long, CommentDto> commentMap= new HashMap<>();
+        for (Comment comment : comments) {
+            CommentDto commentDto = entityToDto(comment);
+           
+          commentMap.put(commentDto.getId(), commentDto);
+        }
+
+
+        for(CommentDto commentDto : commentMap.values()){
+            if(commentDto.getParent() ==null){
+                commentDtos.add(commentDto);               
+    
+          }
+         }
         
-        for(Object[] result : results){
-            CommentDto dto = CommentDto.builder()
-                .id((Long) result[0])
-                .content((String) result[1])
-                .regDate(result[2] != null ? ((Timestamp) result[2]).toLocalDateTime() : null)
-                .parent(result[3] != null ? (Long) result[3] : null)
-                .email((String) result[4])
-                .postId((Long) result[5])
-                .subComments(new ArrayList<>())
-                .level(((Number) result[6]).intValue())
-                .build();
-
-                commentMap.put(dto.getId(), dto);
-        }
-
-        List<CommentDto> parentComments = new ArrayList<>();
-
-        for(CommentDto comment : commentMap.values()){
-            if(comment.getParent() ==null){
-                parentComments.add(comment);                       //부모댓글일 경우 댓글 추가
-
-            }else {
-                CommentDto parentComment = commentMap.get(comment.getParent());
-                parentComment.getSubComments().add(comment);       //답글일 경우 
-            }
-        }
-        return parentComments;
+        return commentDtos;
     }
+
+        
 
 
 
@@ -85,12 +81,17 @@ public class CommentServiceImpl implements CommentService{
     //댓글 등록
     @Override
     @Transactional(readOnly = false)
-    public Long registerComment(CommentDto commentDto, Long postId, Long parentId){
+    public Long registerComment(CommentDto commentDto){
+        
+        Long postId = commentDto.getPostId();
+        Long parentId = commentDto.getParent();
         
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new ArticleNotFoundException("유효하지 않은 게시글입니다."));
+
+        Member member = memberManagementRepository.getMemberByNickname(commentDto.getNickname());
         
-        Comment comment = dtoToEntity(commentDto, post);
+        Comment comment = dtoToEntity(commentDto, post, member);
         
         int maxLevel =2;
 
@@ -156,12 +157,10 @@ public class CommentServiceImpl implements CommentService{
         comment.setContent(commentDto.getContent());
         comment.setRegDate(LocalDateTime.now());
 
-        commentRepository.save(comment);
-        commentRepository.flush();
+        // commentRepository.save(comment);
+        // commentRepository.flush();
     }
 
-
-   
     
 }
 

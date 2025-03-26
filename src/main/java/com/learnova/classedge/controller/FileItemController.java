@@ -4,13 +4,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.learnova.classedge.domain.FileItem;
+import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.service.FileItemService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/files")
+@Slf4j
 public class FileItemController {
 
     private final FileItemService fileItemService;
@@ -33,20 +40,14 @@ public class FileItemController {
     //파일업로드 
     @PostMapping("/upload")
     public ResponseEntity<String> postFile(
-        @RequestParam("file") MultipartFile file, 
+        @RequestParam("files") List<MultipartFile> files,
+        //@RequestParam("file") MultipartFile file,
         @RequestParam(value= "postId", required =false) Long postId,
         @RequestParam(value= "commentId",required =false) Long commentId) {
     
-        if(postId !=null && commentId !=null){ 
-            return ResponseEntity.badRequest().body("게시글 ID와 댓글 ID는 동시에 입력할 수 없습니다.");
-        }
-
-        if(postId == null && commentId == null){ 
-            return ResponseEntity.badRequest().body("게시글 ID 또는 댓글 ID를 입력해 주세요. 둘 중 하나는 반드시 필요합니다");
-        }
-    
         try{ 
-            fileItemService.uploadFile(file, postId, commentId);
+           
+            List<Long> fileIds = fileItemService.uploadFile(files, postId, commentId);
             return ResponseEntity.ok("파일 업로드 성공");
 
         }catch(Exception e){ 
@@ -54,8 +55,9 @@ public class FileItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드 실패: " + e.getMessage());
         }
     }
+    
 
-    //피일 다운로드
+    //파일 다운로드
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> getFile(@PathVariable Long id) {
         Resource resource = fileItemService.downloadFile(id);

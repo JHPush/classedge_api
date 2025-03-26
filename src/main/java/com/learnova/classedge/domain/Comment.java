@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -51,8 +49,9 @@ public class Comment {
     @JoinColumn(name = "c_post_id")
     private Post post; 
 
-    @Column(name = "c_email", nullable = false)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "c_email")
+    private Member member;
 
     @Column(name = "level")
     private Integer level;
@@ -61,6 +60,7 @@ public class Comment {
     @JsonIgnore
     private List<Comment> subComments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "comment")
     private List<FileItem> fileItems = new ArrayList<>();
 

@@ -1,5 +1,6 @@
 package com.learnova.classedge.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,17 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
+import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.Post;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
 import com.learnova.classedge.dto.PostSearchCondition;
+import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
+import com.learnova.classedge.repository.MemberManagementRepository;
 import com.learnova.classedge.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,6 +39,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final FileItemRepository fileItemRepository;
+    private final MemberManagementRepository memberManagementRepository;
 
     @Autowired
     private FileItemService fileItemService;
@@ -49,10 +57,19 @@ public class PostServiceImpl implements PostService {
     // 게시글 목록조회
     @Override
     public List<PostDto> retrievePostList(String boardName, int limit) {
-        List<Post> result = postRepository.findByBoardName(boardName, limit);
-        List<PostDto> postDtoList = result.stream()
-                .map(this::entityToDto)
-                .collect(Collectors.toList());
+        
+        List<Post> result = postRepository.findByBoardName(boardName, limit);       
+        
+        List<PostDto> postDtoList = new ArrayList<>();
+        for (Post post : result) {           
+            PostDto postDto = entityToDto(post);
+            postDto.setNickname(post.getMember().getNickname());
+            postDto.setCommentCount(commentRepository.countByPostId(post.getId()));
+            postDtoList.add(postDto);
+        }
+
+        log.info("postDtoList : {}", postDtoList);
+
         return postDtoList;
     }
 
@@ -60,16 +77,21 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = false)
     @Override
     public Long registerPost(PostDto postDto) {
-        Post post = dtoToEntity(postDto);
+        
+        Member member = memberManagementRepository.getMemberByNickname(postDto.getNickname());
+        Post post = dtoToEntity(postDto, member);
+        log.info("post:{}", post);
         postRepository.save(post);
-        return post.getId();
+        
+         return post.getId();
+        
     }
 
     // 게시글 상세조회
     @Override
     public PostDto retrivePost(Long id) {
-        Optional<Post> result = postRepository.findById(id);
-        Post post = result.orElseThrow();
+        Post post = postRepository.findPostWithFiles(id);
+        //Post post = result.orElseThrow();
         PostDto postDto = entityToDto(post);
         return postDto;
     }
@@ -112,8 +134,7 @@ public class PostServiceImpl implements PostService {
         Optional<Post> result = postRepository.findById(postDto.getId());
         Post post = result.orElseThrow();
         post.changeTitle(postDto.getTitle());
-        post.changeContents(postDto.getContents());
-        post.changeWriter(postDto.getWriter());
+        post.changeContents(postDto.getContents());    
         post.changeRegDate(postDto.getRegDate());
         post.setLmiDate(postDto.getLmiDate());
         post.changeBoardName(postDto.getBoardName());
@@ -148,4 +169,16 @@ public class PostServiceImpl implements PostService {
                 .build();
 
     }
+
+
+    // //파일정보조회
+    // @Override
+    // @Transactional(readOnly = true)
+    // public Post retrievePostWithFiles(Long id){
+
+    //     Post post = postRepository.findPostWithFiles(id);
+    //     return entityToDto(post);
+        
+    // }
+
 }

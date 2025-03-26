@@ -15,6 +15,7 @@ import com.learnova.classedge.domain.MemberRole;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter @Setter
 public class MemberDto extends User {
 
@@ -101,5 +102,5 @@ public class MemberDto extends User {
         // 탈퇴 여부에 따라 활성화 여부 결정
         return !isWithdraw;
     }
-    
+   
 }

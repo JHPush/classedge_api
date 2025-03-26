@@ -1,6 +1,9 @@
 package com.learnova.classedge.dto;
 
+import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -23,7 +26,7 @@ public class PostDto {
 
     private String contents;
 
-    private String writer;
+    private String nickname;
 
     private LocalDateTime regDate;
 
@@ -31,7 +34,10 @@ public class PostDto {
 
     private String boardName;
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+
+    private List<FileItemDto> fileItems = new ArrayList<>();
+
+    // @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int commentCount;  
     
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)

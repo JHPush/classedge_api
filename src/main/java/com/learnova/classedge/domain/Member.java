@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -60,6 +61,20 @@ public class Member {
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
+    
+
+    public Member(String email, String id, String memberName, String password, Boolean isWithdraw, MemberRole role,
+            String nickname, LoginType loginType) {
+        this.email = email;
+        this.id = id;
+        this.memberName = memberName;
+        this.password = password;
+        this.isWithdraw = isWithdraw;
+        this.role = role;
+        this.nickname = nickname;
+        this.loginType = loginType;
+    }
+
 
     @PrePersist
     public void prePersist() {
@@ -67,6 +82,10 @@ public class Member {
             this.isWithdraw = false; // 기본값 설정
         }
     }
+
+       
+    @OneToMany(mappedBy = "member", fetch=FetchType.LAZY )
+    private List<Post> posts = new ArrayList<>();
 
 
     // 사용자에게 역할 부여

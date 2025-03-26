@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
 import com.learnova.classedge.repository.MemberManagementRepository;
 import com.learnova.classedge.repository.PostRepository;
+import com.learnova.classedge.utils.PostCreatedEvent;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,7 @@ public class CommentServiceImpl implements CommentService{
     private final PostRepository postRepository;
     private final FileItemRepository fileItemRepository;
     private final MemberManagementRepository memberManagementRepository;
+    private final ApplicationEventPublisher eventPublisher; 
 
     @Autowired
     private FileItemService fileItemService;
@@ -117,7 +120,7 @@ public class CommentServiceImpl implements CommentService{
         Comment savedComment = commentRepository.save(comment);
 
         log.info("Saved comment ID: {}, postId: {}", savedComment.getId(), savedComment.getPost().getId());
-        
+        eventPublisher.publishEvent(new PostCreatedEvent(this, comment.getMember().getEmail(), String.valueOf(comment.getPost().getId()), (long)comment.getId()));
         return savedComment.getId();
     }
 

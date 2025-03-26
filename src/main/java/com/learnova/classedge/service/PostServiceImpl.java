@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
 import com.learnova.classedge.repository.MemberManagementRepository;
 import com.learnova.classedge.repository.PostRepository;
+import com.learnova.classedge.utils.PostCreatedEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,7 @@ public class PostServiceImpl implements PostService {
     private final CommentRepository commentRepository;
     private final FileItemRepository fileItemRepository;
     private final MemberManagementRepository memberManagementRepository;
+    private final ApplicationEventPublisher eventPublisher; 
 
     @Autowired
     private FileItemService fileItemService;
@@ -82,7 +85,7 @@ public class PostServiceImpl implements PostService {
         Post post = dtoToEntity(postDto, member);
         log.info("post:{}", post);
         postRepository.save(post);
-        
+        eventPublisher.publishEvent(new PostCreatedEvent(this, post.getMember().getEmail(), post.getBoardName(), (long)post.getId()));
          return post.getId();
         
     }

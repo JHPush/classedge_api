@@ -34,31 +34,14 @@ public class NotificationController {
         return new ResponseEntity<>(notifyService.getNotifications(email, LocalDateTime.now().minusDays(14)),HttpStatus.OK);
     }
 
-    // 이벤트 처리 테스트
-    @GetMapping("/test")
-    public ResponseEntity<String> notifyTest(){
-        notifyService.testNotify();
-        return new ResponseEntity<>("okok",HttpStatus.OK);
-    }
-
     // 안읽은 알람 갯수 리턴 (현재 리액트자체 처리)
     @GetMapping("/unread-count")
     public Long getUnreadCount(@RequestParam String email){
         return notifyService.getUnreadNotification(email, LocalDateTime.now().minusDays(14));
     }
-
+    // 알람 읽음 처리
     @PutMapping()
     public ResponseEntity<Long> putNotification(@RequestParam String email){
         return new ResponseEntity<>(notifyService.updateNotificaiton(email), HttpStatus.ACCEPTED);
     }
-
-    // 포스트맨 테스트용 새 알람 생성
-    @PostMapping("/create")
-    public ResponseEntity<String> createNotification(@RequestBody NotificationDto notify) {
-        log.info("Create Notify : {} ", notify);
-        notifyService.createNotification(notify.getEmail(), notify.getContent(), notify.getPostId());
-        return ResponseEntity.ok("알림이 저장되었습니다.");
-    }
-
-    
 }

@@ -85,7 +85,10 @@ public class PostServiceImpl implements PostService {
         Post post = dtoToEntity(postDto, member);
         log.info("post:{}", post);
         postRepository.save(post);
-        eventPublisher.publishEvent(new PostCreatedEvent(this, post.getMember().getEmail(), post.getBoardName(), (long)post.getId()));
+        List<Member> members = memberManagementRepository.findAll();
+        members.forEach(mem->{
+            eventPublisher.publishEvent(new PostCreatedEvent(this, mem.getEmail(), post.getMember().getNickname(), post.getBoardName(), (long)post.getId()));
+        });
          return post.getId();
         
     }

@@ -10,8 +10,7 @@ import com.learnova.classedge.dto.NotificationDto;
 public interface NotificationService {
 
 
-    void createNotification(String email, String message, Long postId);
-    void testNotify();
+    void createNotification(String email,String sender, String message, Long postId);
     List<NotificationDto> getNotifications(String email, LocalDateTime since);
     Long getUnreadNotification(String email, LocalDateTime since);
 
@@ -21,6 +20,7 @@ public interface NotificationService {
         NotificationDto dto = NotificationDto.builder()
                                                 .id(notify.getId())
                                                 .email(notify.getMember().getEmail())
+                                                .sender(notify.getSender())
                                                 .memberName(notify.getMember().getMemberName())
                                                 .content(notify.getContent())
                                                 .postId(notify.getPost().getId())

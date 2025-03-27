@@ -16,7 +16,6 @@ import com.learnova.classedge.dto.NotificationDto;
 import com.learnova.classedge.repository.MemberManagementRepository;
 import com.learnova.classedge.repository.NotificationRepository;
 import com.learnova.classedge.repository.PostRepository;
-import com.learnova.classedge.utils.PostCreatedEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +28,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
     private final MemberManagementRepository memberRepo;
     private final PostRepository postRepo;
-    private final ApplicationEventPublisher eventPublisher; 
     
+    // 알람 읽음 처리
     @Override
     @Transactional
     public Long updateNotificaiton(String email) {
@@ -42,26 +41,20 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void testNotify() {
-        eventPublisher.publishEvent(new PostCreatedEvent(this, "qnrntmvls0@gmail.com", "content", (long)1));
-    }
-
-    @Override
     @Transactional
-    public void createNotification(String email, String message, Long postId) {
-
-        
+    public void createNotification(String email, String sender, String message, Long postId) {
         Member member = memberRepo.findById(email)
                 .orElseThrow(() -> new IllegalArgumentException("Do not Find member" + email));
         Post post = postRepo.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Do not Find post" + postId));
         Notification notify = Notification.builder()
                 .member(member)
+                .sender(sender)
                 .isRead(false)
                 .post(post)
                 .content(message).build();
 
-        log.info("in notify Service imple");
+        log.info("in notify Service imple {} ", notify.getSender());
         notifyRepo.save(notify);
 
         // 실시간 전송 (클라 구독주소)

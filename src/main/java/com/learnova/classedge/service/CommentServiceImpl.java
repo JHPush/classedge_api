@@ -157,8 +157,6 @@ public class CommentServiceImpl implements CommentService{
         comment.setContent(commentDto.getContent());
         comment.setRegDate(LocalDateTime.now());
 
-        // commentRepository.save(comment);
-        // commentRepository.flush();
     }
 
     

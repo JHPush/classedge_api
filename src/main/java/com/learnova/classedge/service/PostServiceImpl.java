@@ -155,10 +155,14 @@ public class PostServiceImpl implements PostService {
 
         Page<Post> page = postRepository.paging(condition, pageable);
         List<PostDto> posts = page.get().map(post -> {
+            log.info("post sss : {}", post.getMember());
             int commentCount = commentRepository.countByPostId(post.getId());  // 댓글 개수 조회
             boolean hasFile = fileItemRepository.existsByPostId(post.getId()); // 파일 첨부 여부 확인
     
+            log.info("member : {} ", post.getMember());
             PostDto postDto = entityToDto(post);
+            log.info("member2 : {} ", post.getMember());
+
             postDto.setCommentCount(commentCount);
             postDto.setHasFile(hasFile);
     

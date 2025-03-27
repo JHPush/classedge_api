@@ -1,18 +1,23 @@
 package com.learnova.classedge.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.MemberRole;
+import com.learnova.classedge.dto.MemberCheckingDto;
 import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.dto.MemberRequestDto;
 import com.learnova.classedge.repository.MemberManagementRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -40,6 +45,22 @@ public class MemberManagementService {
         Member member = dtoToMember(dto);
         member.setIsWithdraw(isWithdraw);
         memberManagementRepository.save(member);
+    }
+    public void ActivateMember(String email){
+
+        Member member = memberManagementRepository.getMemberByEmail(email);
+        member.setIsWithdraw(true);
+    }
+
+
+    // 회원 목록 가져오기
+    public List<MemberCheckingDto> getAllMembers() {
+        log.info("adfasfasfsafsad");
+
+        return memberManagementRepository.findAll()
+                .stream()
+                .map(this::memberToCheckDto)
+                .collect(Collectors.toList());
     }
 
     // 사용자가 존재하지 않으면 새로 생성, 존재하면 'PROFESSOR' 역할 부여
@@ -92,6 +113,16 @@ public class MemberManagementService {
         MemberDto dto = new MemberDto(member.getEmail(), member.getId(), member.getMemberName()
                                     , member.getPassword(), member.getIsWithdraw(), member.getRole()
                                     , member.getNickname(), member.getLoginType());
+
+        return dto;
+    }
+
+    // DTO -> Entity 변환
+    MemberCheckingDto memberToCheckDto(Member member){
+
+        MemberCheckingDto dto = new MemberCheckingDto(member.getEmail()
+                                    , member.getRole(), member.getIsWithdraw()
+                                    , member.getNickname());
 
         return dto;
     }

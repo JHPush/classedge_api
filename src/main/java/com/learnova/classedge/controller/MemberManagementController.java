@@ -1,11 +1,13 @@
 package com.learnova.classedge.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,13 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.MemberRole;
+import com.learnova.classedge.dto.MemberCheckingDto;
 import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.dto.MemberRequestDto;
 import com.learnova.classedge.service.MemberManagementService;
 
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
@@ -41,6 +45,21 @@ public class MemberManagementController {
         }
 
     }
+
+       // 회원 활성화/비활성화
+       @PutMapping("/members")
+       // @PreAuthorize("hasRole('ADMIN')")
+       public ResponseEntity<String> activateMember(@RequestParam(name = "value") String email) {
+   
+           try {
+               memberManagementService.ActivateMember(email);
+               return new ResponseEntity<>(email, HttpStatus.OK);
+           } catch (Exception e) {
+               return new ResponseEntity<>("Error occurred while activating/deactivating member.",
+                       HttpStatus.INTERNAL_SERVER_ERROR);
+           }
+   
+       }
 
     // 'PROFESSOR' 역할 부여
     @PostMapping("/assign-professor")
@@ -79,6 +98,15 @@ public class MemberManagementController {
         return new ResponseEntity<>(new MemberDto(member.getEmail(), member.getId(), member.getMemberName(),
                 member.getPassword(), member.getIsWithdraw(), member.getRole(),
                 member.getNickname(), member.getLoginType()), HttpStatus.OK);
+    }
+
+    // 회원 목록 조회
+    @GetMapping("/found")
+    public ResponseEntity<List<MemberCheckingDto>> getAllMembers() {
+        log.info("ASdfasdfasfa");
+        List<MemberCheckingDto> members = memberManagementService.getAllMembers();
+        log.info("members : {}", members);
+        return ResponseEntity.ok(members);
     }
 
 

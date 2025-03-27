@@ -59,7 +59,6 @@ public class Member {
         }
     }
 
-
     // 사용자에게 역할 부여
     public void setRole(MemberRole memberRole) {
         this.role = memberRole;

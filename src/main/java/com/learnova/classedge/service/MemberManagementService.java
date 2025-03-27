@@ -26,7 +26,6 @@ public class MemberManagementService {
     public Member findById(String id) {
         return memberManagementRepository.getMemberById(id);
     }
-
     // 이메일로 회원 조회
     public Member findByEmail(String email) {
         return memberManagementRepository.getMemberByEmail(email);

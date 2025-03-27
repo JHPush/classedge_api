@@ -3,16 +3,17 @@ package com.learnova.classedge.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.learnova.classedge.dto.MemberRequestDto;
 import com.learnova.classedge.service.KakaoAuthService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Slf4j
 @RestController
@@ -24,21 +25,17 @@ public class KakaoAuthController {
 
     // 카카오 로그인 요청 (인가 코드 받기)
     @GetMapping("/login/kakao")
-    public ResponseEntity<String> kakaoLogin(@RequestParam(value = "code", required = false) String code, 
-                                             @RequestBody(required = false) MemberRequestDto memberRequestDto) {
-    
+    public ResponseEntity<Map<String, Object>> kakaoLogin(@RequestParam(name = "code") String code) {
+ 
         log.info("code : {}", code);
-        try {
-            // KakaoAuthService를 이용하여 로그인 또는 회원가입 처리 후 JWT 반환
-            String jwtToken = kakaoAuthService.kakaoLogin(code, memberRequestDto);
 
-            log.info("jwtToken : {}", jwtToken);
-            
-            // JWT 반환
-            return ResponseEntity.ok(jwtToken);
+        try {
+            // 카카오 로그인 서비스 호출
+            Map<String, Object> response = kakaoAuthService.kakaoLogin(code);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // 예외 처리 (로그인 및 회원가입 중 에러 발생 시)
-            return ResponseEntity.status(400).body("로그인 또는 회원가입 중 오류가 발생했습니다: " + e.getMessage());
+            log.error("카카오 로그인 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("error", "카카오 로그인 중 오류가 발생했습니다."));
         }
     }
 }

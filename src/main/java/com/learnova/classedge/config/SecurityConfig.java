@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.learnova.classedge.security.filter.JwtCheckFilter;
 import com.learnova.classedge.security.handler.ApiLoginFailureHandler;
@@ -26,7 +28,7 @@ import com.learnova.classedge.security.handler.DetailAccessDeniedHandler;
 @Configuration
 @EnableWebSecurity // 웹 시큐리티 활성화
 @EnableMethodSecurity // 메소드 관련 인가 처리 
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer{
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -97,5 +99,6 @@ public class SecurityConfig {
 
         return source;
     }
+
 }
 

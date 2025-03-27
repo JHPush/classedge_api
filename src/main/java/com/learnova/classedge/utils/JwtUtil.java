@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.stereotype.Component;
+
 import com.learnova.classedge.exception.CustomJwtException;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -15,6 +17,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 
+@Component
 public class JwtUtil {
     // 임의의 값 설정 가능 (길이 주의!)
     private static String key = "adsflkasjfljweiajfoiasjfijlicxvjlixczihiore143214";

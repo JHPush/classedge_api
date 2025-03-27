@@ -21,7 +21,6 @@ import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;
 import com.learnova.classedge.dto.PostDto;
 import com.learnova.classedge.dto.PostSearchCondition;
-import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.repository.CommentRepository;
 import com.learnova.classedge.repository.FileItemRepository;
 import com.learnova.classedge.repository.MemberManagementRepository;

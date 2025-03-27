@@ -28,155 +28,147 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnailator;
 
 @Service
 @RequiredArgsConstructor
-@Getter @Setter
-public class FileItemServiceImpl implements FileItemService{
+@Getter
+@Setter
+@Slf4j
+public class FileItemServiceImpl implements FileItemService {
 
     private final FileItemRepository fileItemRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    //경로설정
+    // 경로설정
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
-    //디렉토리 생성
+    // 디렉토리 생성
     @PostConstruct
-    public void init(){ 
+    public void init() {
         File tempdir = new File(uploadPath);
-        
-        if(!tempdir.exists()){
-            tempdir.mkdirs(); 
+
+        if (!tempdir.exists()) {
+            tempdir.mkdirs();
         }
     }
-    
 
-
-    //파일업로드
+    // 파일업로드
     @Override
     public List<Long> uploadFile(List<MultipartFile> files, Long postId, Long commentId) {
-        List<Long> fileIds = new ArrayList<>(); 
+        List<Long> fileIds = new ArrayList<>();
         Post post = null;
-        Comment comment= null;
+        Comment comment = null;
 
-        if(postId != null){ 
+        if (postId != null) {
             post = postRepository.findById(postId)
-            .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id:" +postId));
+                    .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id:" + postId));
         }
-        if(commentId !=null){ 
-             comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. id:" + commentId ));
+        if (commentId != null) {
+            comment = commentRepository.findById(commentId)
+                    .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다. id:" + commentId));
         }
 
         for (MultipartFile file : files) {
-        //파일명 생성
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        
-        //파일 저장 경로
-        Path savePath = Paths.get(uploadPath, fileName);   
+            // 파일명 생성
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
-        Path thumbnailPath = null;
-        try{
-            Files.copy(file.getInputStream(), savePath);
+            // 파일 저장 경로
+            Path savePath = Paths.get(uploadPath, fileName);
 
-            String contentType = file.getContentType();
-            
+            Path thumbnailPath = null;
+            try {
+                Files.copy(file.getInputStream(), savePath);
 
-            //썸네일 생성
-            if(contentType != null && contentType.startsWith("image")){ 
-                
-                thumbnailPath = Paths.get(uploadPath, "s_" + fileName);
-                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailPath.toFile(), 200, 200);
+                String contentType = file.getContentType();
+
+                // 썸네일 생성
+                if (contentType != null && contentType.startsWith("image")) {
+
+                    thumbnailPath = Paths.get(uploadPath, "s_" + fileName);
+                    Thumbnailator.createThumbnail(savePath.toFile(), thumbnailPath.toFile(), 200, 200);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("파일 저장 실패: " + e.getMessage());
             }
 
-        }catch(IOException e){
-            throw new RuntimeException("파일 저장 실패: "+ e.getMessage());
+            FileItem fileEntity = FileItem.builder()
+                    .filePath(savePath.toString())
+                    .fileSize(file.getSize())
+                    .fileName(fileName)
+                    .fileExtension(getFileExtension(fileName))
+                    .comment(comment)
+                    .post(post)
+                    .thumbnailPath(thumbnailPath != null ? thumbnailPath.toString() : null)
+                    .build();
+
+            FileItem savedFile = fileItemRepository.save(fileEntity);
+            fileIds.add(savedFile.getId());
         }
-
-        FileItem fileEntity = FileItem.builder()
-            .filePath(savePath.toString())
-            .fileSize(file.getSize())
-            .fileName(fileName)
-            .fileExtension(getFileExtension(fileName))
-            .comment(comment)
-            .post(post)
-            .thumbnailPath(thumbnailPath != null ? thumbnailPath.toString() : null)
-            .build();
-
-        FileItem savedFile = fileItemRepository.save(fileEntity);
-        fileIds.add(savedFile.getId());
-    }
         return fileIds;
     }
 
-
-
-
-    //파일확장자
-    private String getFileExtension(String fileName){
+    // 파일확장자
+    private String getFileExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf('.');
         return lastDotIndex == -1 ? "" : fileName.substring(lastDotIndex + 1);
     }
-    
 
-    //파일다운로드
+    // 파일다운로드
     @Override
     public Resource downloadFile(Long id) {
 
         FileItem fileItem = fileItemRepository.findById(id)
-            .orElseThrow(() -> new ArticleNotFoundException("파일이 존재하지 않습니다. ID:" + id));
+                .orElseThrow(() -> new ArticleNotFoundException("파일이 존재하지 않습니다. ID:" + id));
 
-        String fileName = fileItem.getFileName(); 
+        String fileName = fileItem.getFileName();
         String thumbnailPath = fileItem.getThumbnailPath();
-      
-        //썸네일이 있을 경우
-        if(thumbnailPath !=null){
 
-            String thumbnailFilePath = thumbnailPath.startsWith(uploadPath) ? thumbnailPath : uploadPath + File.separator + thumbnailPath;
+        // 썸네일이 있을 경우
+        if (thumbnailPath != null) {
+
+            String thumbnailFilePath = thumbnailPath.startsWith(uploadPath) ? thumbnailPath
+                    : uploadPath + File.separator + thumbnailPath;
 
             Path path = Paths.get(thumbnailFilePath);
             Resource resource = new FileSystemResource(path);
-       
-            //파일을 못읽으면 default 이미지 반환
-            if(!resource.isReadable()){ 
+
+            // 파일을 못읽으면 default 이미지 반환
+            if (!resource.isReadable()) {
                 resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
             }
             return resource;
         }
-        
+
         Path filePath = Paths.get(uploadPath, fileName);
         Resource resource = new FileSystemResource(filePath);
 
         return resource;
-        
+
     }
 
-    
-
-    //파일 삭제
+    // 파일 삭제
     @Override
     @Transactional(readOnly = false)
-    public void removeFile(Long id) { 
+    public void removeFile(Long id) {
 
         FileItem fileItem = fileItemRepository.findById(id)
-            .orElseThrow(() -> new ArticleNotFoundException("파일이 존재하지 않습니다. ID:" + id));
+                .orElseThrow(() -> new ArticleNotFoundException("파일이 존재하지 않습니다. ID:" + id));
 
         Path filePath = Paths.get(uploadPath, fileItem.getFileName());
         Path thumbnailPath = Paths.get(uploadPath, "s_" + fileItem.getFileName());
 
-        try{ 
+        try {
             Files.deleteIfExists(filePath);
             Files.deleteIfExists(thumbnailPath); // 파일시스템에서 파일과 썸네일파일 삭제
             fileItemRepository.delete((fileItem));
-        }
-        catch(IOException e) { 
+        } catch (IOException e) {
             throw new RuntimeException("파일 삭제 오류");
         }
-        
-        
+
     }
 
 }

@@ -79,6 +79,7 @@ public class PostController {
             }
         }
 
+
         log.info("id : {}", id);
 
         return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);

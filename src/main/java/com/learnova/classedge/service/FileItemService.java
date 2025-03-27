@@ -25,4 +25,26 @@ public interface FileItemService {
     //파일삭제
     public void removeFile(Long id);
     
+    default FileItemDto dtoToEntity (FileItem fileItem) {
+        return FileItemDto.builder()
+            .id(fileItem.getId())
+            .fileName(fileItem.getFileName())
+            .filePath(fileItem.getFilePath())
+            .fileSize(fileItem.getFileSize())
+            .fileExtension(fileItem.getFileExtension())
+            .thumbnailPath(fileItem.getThumbnailPath())
+            .build();
+        
+    }
+
+    default FileItem entityToDto(FileItemDto dto, Post post, Comment comment) {
+        return FileItem.builder()
+            .id(dto.getId())
+            .fileName(dto.getFileName())
+            .filePath(dto.getFilePath())
+            .fileSize(dto.getFileSize())
+            .fileExtension(dto.getFileExtension())
+            .thumbnailPath(dto.getThumbnailPath())
+            .build();
+    }
 }

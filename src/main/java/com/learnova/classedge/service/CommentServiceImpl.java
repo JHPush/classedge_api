@@ -117,7 +117,7 @@ public class CommentServiceImpl implements CommentService{
         Comment savedComment = commentRepository.save(comment);
 
         log.info("Saved comment ID: {}, postId: {}", savedComment.getId(), savedComment.getPost().getId());
-        eventPublisher.publishEvent(new PostCreatedEvent(this, comment.getMember().getEmail(), "댓글", (long)comment.getPost().getId()));
+        eventPublisher.publishEvent(new PostCreatedEvent(this, comment.getPost().getMember().getEmail(), comment.getMember().getNickname(), "댓글", (long)comment.getPost().getId()));
         return savedComment.getId();
     }
 

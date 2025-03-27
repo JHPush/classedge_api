@@ -31,6 +31,9 @@ public class Notification {
     @Column(name = "n_id")
     private Long id;
 
+    @Column(name = "n_sender")
+    private String sender;
+
     @Column(name = "n_content")
     private String content;
     

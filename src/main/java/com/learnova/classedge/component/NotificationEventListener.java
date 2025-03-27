@@ -18,7 +18,7 @@ public class NotificationEventListener {
     @EventListener
     @Transactional
     public void handlePostCreatedEvent(PostCreatedEvent ev){
-        notificationService.createNotification(ev.getEmail(), ev.getContent(), ev.getPostId());
+        notificationService.createNotification(ev.getEmail(), ev.getSender(), ev.getContent(), ev.getPostId());
     }
     
 }

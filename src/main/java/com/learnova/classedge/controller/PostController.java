@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.learnova.classedge.domain.MemberRole;
-import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.dto.PageRequestDto;
 import com.learnova.classedge.dto.PageResponseDto;

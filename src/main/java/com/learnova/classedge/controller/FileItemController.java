@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.learnova.classedge.domain.FileItem;
-import com.learnova.classedge.dto.FileItemDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.service.FileItemService;
 
@@ -15,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.core.io.Resource;

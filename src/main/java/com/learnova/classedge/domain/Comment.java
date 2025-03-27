@@ -58,6 +58,7 @@ public class Comment {
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
     @JsonIgnore
+    @Builder.Default
     private List<Comment> subComments = new ArrayList<>();
 
     @Builder.Default

@@ -85,6 +85,7 @@ public class Member {
 
        
     @OneToMany(mappedBy = "member", fetch=FetchType.LAZY )
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
 

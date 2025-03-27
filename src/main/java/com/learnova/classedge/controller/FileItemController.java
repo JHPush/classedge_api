@@ -55,8 +55,8 @@ public class FileItemController {
     
 
     //파일 다운로드
-    @GetMapping("/download/{id}")
-    public ResponseEntity<Resource> getFile(@PathVariable Long id) {
+    @GetMapping("/download")
+    public ResponseEntity<Resource> getFile(@RequestParam(name = "value") Long id) {
         Resource resource = fileItemService.downloadFile(id);
 
         HttpHeaders headers = new HttpHeaders();
@@ -72,8 +72,8 @@ public class FileItemController {
     }
 
     //파일 삭제 
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<String> deleteFile(@PathVariable Long id) { 
+    @DeleteMapping("delete")
+    public ResponseEntity<String> deleteFile(@RequestParam(name = "value") Long id) { 
          
         try{ 
         fileItemService.removeFile(id);

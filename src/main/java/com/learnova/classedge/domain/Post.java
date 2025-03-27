@@ -53,6 +53,7 @@ public class Post {
     private String boardName;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
     @Builder.Default
@@ -60,6 +61,7 @@ public class Post {
     private List<FileItem> fileItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
     
     @ManyToOne

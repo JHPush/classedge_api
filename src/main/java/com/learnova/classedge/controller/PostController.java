@@ -45,7 +45,7 @@ public class PostController {
     // 게시글 목록조회 - 카테고리 별 http://localhost:8080/api/v1/posts?limit=5
     @GetMapping("/posts")
     public ResponseEntity<Map<String, Object>> getPostBoard(
-            @RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
+            @RequestParam(name = "limit", required = false, defaultValue = "5") int limit) {
 
         List<PostDto> taskPosts = postService.retrievePostList("TASK", limit);
         List<PostDto> noticePosts = postService.retrievePostList("NOTICE", limit);

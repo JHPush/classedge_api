@@ -33,7 +33,7 @@ spring:
         registration:
           kakao:
            client-id: 0dfc6bf7b966b2bdfe198d82fc657170
-           redirect-uri: http://classedgifront:3000/oauth/kakao
+           redirect-uri: http://192.168.248.133:30080/oauth/kakao
            authorization-grant-type: authorization_code
            client-authentication-method: POST
            client-name: Kakao
@@ -45,9 +45,6 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-global:
-  front_react: classedgifront:9000     # 전역 변수 1: 애플리케이션 모드
-  api_docker: classedgeapi:8080    # 전역 변수 2: 최대 로그인 시도 횟수
 
 # Logging
 logging:

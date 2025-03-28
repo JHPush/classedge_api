@@ -1,0 +1,55 @@
+
+spring:
+  application:
+    name: classedge
+  # DB 연결 정보
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.136:3306/classedge?serverTimezone=Asia/Seoul&characterEncoding=utf8
+    username: user1
+    password: 1234
+
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: update   
+    # show-sql: true     # 콘솔에 출력
+    properties:
+      hibernate:       
+        '[format_sql]': true
+        '[default_batch_fetch_size]': 20  # 글로벌 Batch Size 설정 (JPA에서 지연 로딩(Lazy Loading) 최적화를 위해 사용한다.)
+
+  servlet:
+    multipart:
+      max-file-size: 3MB       # 한 파일의 최대 크기
+      max-request-size: 10MB    # 전체 요청의 최대 크기
+      location: /home/user1/upload  # 업로드된 파일을 저장할 디렉토리 경로
+      enabled: true             # 파일 업로드 기능 활성화 여부
+      file-size-threshold: 2KB  # 파일 크기 임계값 설정 (2KB 이하의 파일은 메모리에서 처리)
+  
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+           client-id: 0dfc6bf7b966b2bdfe198d82fc657170
+           redirect-uri: http://localhost:3000/oauth/kakao
+           authorization-grant-type: authorization_code
+           client-authentication-method: POST
+           client-name: Kakao
+           scope:
+              - profile_nickname
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+# Logging
+logging:
+  level:
+    # root: DEBUG
+    '[org.hibernate.SQL]': debug             # SQL문 로그 출력
+    '[org.hibernate.orm.jdbc.bind]': trace   # 중요 : 바인딩된 값 출력  
+    '[org.springframework.classedge]': trace # Security Logging

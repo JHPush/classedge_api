@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+
+  classedgifront:
+    image: jaechang13/classedgifront:v14
+    ports:
+      - "80:80"
+    networks:
+      - backend
+    depends_on:
+      - classedgeapi
+
+  classedgeapi:
+    image: jaechang13/classedgeapi:v12
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0.41
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=classedge
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - backend
+
+
+volumes:
+  db_data:
+
+networks:
+  backend:
+    driver: bridge

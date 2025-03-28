@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: classedge-api-deploy
+  namespace: classedge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: classapi-pod
+  template:
+    metadata:
+      labels:
+        app: classapi-pod
+    spec:
+      containers:
+        - name: classapi-container
+          image: jaechang13/classedgeapi:v1
+          ports:
+            - containerPort: 8080
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: classedge-service
+  namespace: classedge
+spec:
+  selector:
+    app: classapi-pod
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 32080
+  type: NodePort

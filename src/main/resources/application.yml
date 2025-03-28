@@ -5,7 +5,7 @@ spring:
   # DB 연결 정보
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://db:3306/classedge?serverTimezone=Asia/Seoul&characterEncoding=utf8
+    url: jdbc:mysql://db.classedge.svc.cluster.local:3306/classedge?serverTimezone=Asia/Seoul&characterEncoding=utf8
     username: root
     password: 1234
 

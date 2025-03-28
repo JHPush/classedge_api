@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
@@ -90,6 +91,19 @@ public class PostServiceImpl implements PostService {
         });
          return post.getId();
         
+    }
+
+    // 게시글과 파일 등록
+    @Transactional(readOnly = false)
+    @Override
+    public Long registerPostWithFiles(PostDto postDto, List<MultipartFile> files) {
+        
+       Long postId =registerPost(postDto);
+
+       if (files != null && !files.isEmpty()) {
+        fileItemService.uploadFile(files, postId, null);
+    }
+        return postId;
     }
 
     // 게시글 상세조회

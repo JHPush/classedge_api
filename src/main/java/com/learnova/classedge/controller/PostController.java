@@ -52,8 +52,8 @@ public class PostController {
 
         return new ResponseEntity(Map.of("task", taskPosts, "notice", noticePosts), HttpStatus.OK);
     }
-
-    // 게시글 등록 http://localhost:8080/api/v1/posts/register
+    
+    //게시글 등록+파일첨부
     @PostMapping("/posts/register")
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR', 'ROLE_ADMIN')")
     public ResponseEntity<Map<String, Long>> postPost(
@@ -64,27 +64,22 @@ public class PostController {
         MemberDto memberDto = (MemberDto) userDetails;
 
         String nickname = memberDto.getNickname();
-        String memberName = memberDto.getMemberName();
-        MemberRole role = memberDto.getRole();
 
         postDto.setNickname(nickname);
         log.info("postDto: {}", postDto);
-        Long id = postService.registerPost(postDto);
-        if (files != null &&files.size() > 0) {
+
+    
             try {
-                List<Long> fileIds = fileItemService.uploadFile(files, id, null);
+                Long id = postService.registerPostWithFiles(postDto, files);
+                log.info("id : {}", id);
+                return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                  log.error("게시글 등록 중 오류 발생: ", e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-
-        log.info("id : {}", id);
-
-        return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
-
-    }
 
     // 게시글 상세조회 http://localhost:8080/api/v1/posts/1
     @GetMapping("/posts/{id}")

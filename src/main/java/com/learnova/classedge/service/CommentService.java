@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Member;
@@ -19,6 +21,7 @@ public interface CommentService {
 
     //댓글 등록
     Long registerComment(CommentDto commentDto);
+    public Long registerCommentWithFiles(CommentDto commentDto, List<MultipartFile> files); // 파일첨부+작성
 
     //댓글 삭제
     public void removeComment(Long id);

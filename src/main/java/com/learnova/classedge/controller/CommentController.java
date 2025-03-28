@@ -52,7 +52,7 @@ public class CommentController {
         return new ResponseEntity<>(commentDto, HttpStatus.OK);
     }
 
-    //댓글등록
+    //댓글과 파일 등록
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> postComment(
         @RequestPart("commentDto") CommentDto commentDto,
@@ -62,32 +62,22 @@ public class CommentController {
         MemberDto memberDto = (MemberDto) userDetails;
 
         String nickname = memberDto.getNickname();
-        String memberName = memberDto.getMemberName();
-        
-        Long postId = commentDto.getPostId();
-        Long parentId = commentDto.getParent();
     
         commentDto.setNickname(nickname);
 
         log.info("commentDto: {}", commentDto);
-        Long id = commentService.registerComment(commentDto);
-        if(files!=null &&files.size()>0){
-            try {
-                List<Long> fileIds = fileItemService.uploadFile(files, null, id);
-                log.info("file register success : {} ", fileIds.size());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", id);
-        response.put("memberName", memberName);
-
-        log.info("id: {}, postId: {}, parentId: {}, memberName: {}", id, postId, parentId, memberName);
         
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+            try {
+                Long id = commentService.registerCommentWithFiles(commentDto, files);
+                log.info("id : {}", id);
+                return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
+
+            } catch (Exception e) {
+                  log.error("댓글 등록 중 오류 발생: ", e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
     }
+
 
      //댓글삭제
      @DeleteMapping("/{id}")

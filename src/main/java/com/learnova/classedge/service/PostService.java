@@ -6,6 +6,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.learnova.classedge.domain.FileItem;
 import com.learnova.classedge.domain.Member;
@@ -22,6 +23,7 @@ public interface PostService {
     List<PostDto> retrievePostList(String boardName, int limit); // 과제/공지 5개 글
     PageResponseDto<PostDto> paging(PostSearchCondition condition,PageRequestDto pageRequestDto);     // 검색, 페이징 처리
     public Long registerPost(PostDto postDto); // 작성
+    public Long registerPostWithFiles(PostDto postDto, List<MultipartFile> files); // 파일첨부+작성
     PostDto retrivePost(Long id); // 상세조회
     void removePost(Long postId); // 삭제
     void modifyPost(PostDto postDto); // 수정

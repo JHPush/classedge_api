@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.learnova.classedge.domain.Comment;
 import com.learnova.classedge.domain.FileItem;
@@ -125,7 +126,17 @@ public class CommentServiceImpl implements CommentService{
         return savedComment.getId();
     }
 
+    //파일과 댓글 등록
+    @Override
+    @Transactional(readOnly = false)
+    public Long registerCommentWithFiles(CommentDto commentDto, List<MultipartFile> files){
+        Long commentId =registerComment(commentDto);
 
+        if (files != null && !files.isEmpty()) {
+         fileItemService.uploadFile(files, null, commentId);
+     }
+         return commentId;
+    }
 
 
     //댓글 삭제

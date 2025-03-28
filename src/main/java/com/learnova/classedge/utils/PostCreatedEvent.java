@@ -19,5 +19,4 @@ public class PostCreatedEvent extends ApplicationEvent {
         this.postId = postId;
     } 
 
-    
 }

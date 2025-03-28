@@ -20,7 +20,6 @@ import com.learnova.classedge.dto.CommentDto;
 import com.learnova.classedge.dto.MemberDto;
 import com.learnova.classedge.exception.ArticleNotFoundException;
 import com.learnova.classedge.service.CommentService;
-import com.learnova.classedge.service.FileItemService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +36,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class CommentController {
 
     private final CommentService commentService;
-    private final FileItemService fileItemService;
-
 
     //댓글 목록 조회
     @GetMapping("/{postId}")

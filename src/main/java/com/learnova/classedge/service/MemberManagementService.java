@@ -11,7 +11,6 @@ import com.learnova.classedge.domain.Member;
 import com.learnova.classedge.domain.MemberRole;
 import com.learnova.classedge.dto.MemberCheckingDto;
 import com.learnova.classedge.dto.MemberDto;
-import com.learnova.classedge.dto.MemberRequestDto;
 import com.learnova.classedge.repository.MemberManagementRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -39,19 +38,13 @@ public class MemberManagementService {
     public Member findByNickname(String nickname) {
         return memberManagementRepository.getMemberByNickname(nickname);
     }
-    // 회원 활성화/비활성화 처리
-    public void ActivateMember(MemberDto dto, boolean isWithdraw){
 
-        Member member = dtoToMember(dto);
-        member.setIsWithdraw(isWithdraw);
-        memberManagementRepository.save(member);
-    }
+    // 회원 탈퇴 처리
     public void ActivateMember(String email){
 
         Member member = memberManagementRepository.getMemberByEmail(email);
         member.setIsWithdraw(true);
     }
-
 
     // 회원 목록 가져오기
     public List<MemberCheckingDto> getAllMembers() {
@@ -63,48 +56,10 @@ public class MemberManagementService {
                 .collect(Collectors.toList());
     }
 
-    // 사용자가 존재하지 않으면 새로 생성, 존재하면 'PROFESSOR' 역할 부여
-    public Member manageProfessorRole(MemberRequestDto memberRequestDto, Member admin) {
-
-        MemberDto memberDto = memberRequestDto.toMemberDto();
-        
-        // 관리자만 'PROFESSOR' 역할을 부여 가능
-        if (admin.getRole() != MemberRole.ADMIN) {
-            throw new RuntimeException("관리자만 강사 계정을 생성할 수 있습니다.");
-        }
-
-        // 'PROFESSOR' 역할 부여
-        if (memberDto.getRole() == null) {
-            memberDto.setRole(MemberRole.PROFESSOR);
-        }
-
-        Member existingMember = memberManagementRepository.findById(memberDto.getId()).orElse(null);
-        
-        // 기존 사용자 없으면 새로 생성
-        if (existingMember == null) {
-            return registerNewProfessorMember(memberDto);
-        }
-        
-        // 기존 사용자가 있으면 'PROFESSOR' 역할 부여
-        existingMember.setRole(MemberRole.PROFESSOR);
-        return memberManagementRepository.save(existingMember);
-    }
-
-    // 새 사용자를 'PROFESSOR' 역할로 등록
-    private Member registerNewProfessorMember(MemberDto memberDto) {
-
-        Member newProfessor = Member.builder()
-                                        .email(memberDto.getEmail())
-                                        .id(memberDto.getId())
-                                        .memberName(memberDto.getMemberName())
-                                        .password(passwordEncoder.encode(memberDto.getPassword()))
-                                        .isWithdraw(memberDto.getIsWithdraw() != null ? memberDto.getIsWithdraw() : false)
-                                        .role(MemberRole.PROFESSOR)
-                                        .nickname(memberDto.getNickname())
-                                        .loginType(memberDto.getLoginType())
-                                        .build();    
-        
-        return memberManagementRepository.save(newProfessor);
+    // 'STUDENT' 사용자에게 'PROFESSOR' 역할 부여
+    public void manageProfessorRole(String email) {
+        Member member = memberManagementRepository.getMemberByEmail(email);
+        member.setRole(MemberRole.PROFESSOR);
     }
 
     // DTO -> Entity 변환

@@ -1,6 +1,5 @@
 package com.learnova.classedge.dto;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +36,7 @@ public class PostDto {
 
     private List<FileItemDto> fileItems = new ArrayList<>();
 
-    // @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private int commentCount;  
+    private int commentCount;
     
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private boolean hasFile;

@@ -21,7 +21,7 @@ public class NotifyConfig implements WebSocketMessageBrokerConfigurer{
     // /ws 경로로 클라와 웹소켓으로 연결
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/v1/ws").setAllowedOrigins("http://192.168.248.133:30080").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("http://192.168.248.133:30080").withSockJS();
 
     }
 

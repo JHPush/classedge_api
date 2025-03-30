@@ -1,3 +1,32 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: classedge-pv
+  namespace: classedge
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/classedge-storage  # 워커 노드의 실제 경로
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: classedge-pvc
+  namespace: classedge
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: classedge-pv
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,13 +44,18 @@ spec:
     spec:
       containers:
         - name: classapi-container
-          image: jaechang13/classedgeapi:cf194e804c168d83207b333bedff4ae50fb85e82
+          image: jaechang13/classedgeapi:33efb40edbeeab47581a5bea2e1e858ea2beeab2
           ports:
             - containerPort: 8080
+          volumeMounts:
+            - name: upload-storage
+              mountPath: /home/user1/upload  # 스프링부트 설정에서 지정한 경로
+      volumes:
+        - name: upload-storage
+          persistentVolumeClaim:
+            claimName: classedge-pvc
 
 ---
-
-
 apiVersion: v1
 kind: Service
 metadata:

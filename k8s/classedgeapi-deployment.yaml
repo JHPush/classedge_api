@@ -44,7 +44,7 @@ spec:
     spec:
       containers:
         - name: classapi-container
-          image: jaechang13/classedgeapi:33efb40edbeeab47581a5bea2e1e858ea2beeab2
+          image: jaechang13/classedgeapi:3f4a0de5e110463f1b9861fe76fc9e44947e5dd2
           ports:
             - containerPort: 8080
           volumeMounts:

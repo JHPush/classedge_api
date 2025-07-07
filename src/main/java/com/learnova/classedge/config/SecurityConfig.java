@@ -49,8 +49,7 @@ public class SecurityConfig implements WebMvcConfigurer{
             .requestMatchers("/api/v1/login/kakao").permitAll() // 카카오 로그인 허용
             .requestMatchers("/api/v1/login", "/api/v1/signup/**").permitAll() // 일반 로그인 & 회원가입 허용
             .requestMatchers("/ws/**").permitAll() // 웹소켓 허용
-            .requestMatchers("/api/v1/refresh").permitAll() // 웹소켓 허용
-            .requestMatchers("/api/v1/admin/**").permitAll()
+            .requestMatchers("/api/v1/refresh").permitAll()
             .anyRequest().authenticated() // 그 외 요청은 인증 필요
         );
 

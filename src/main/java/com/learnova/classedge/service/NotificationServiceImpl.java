@@ -56,7 +56,6 @@ public class NotificationServiceImpl implements NotificationService {
         log.info("in notify Service imple {} ", notify.getSender());
         notifyRepo.save(notify);
 
-        // 실시간 전송 (클라 구독주소)
         try {
             messagingTemplate.convertAndSend("/api/v1/alert/" + email, entityToDto(notify));
             log.info("메시지 전송 ! : {}", notify.toString());

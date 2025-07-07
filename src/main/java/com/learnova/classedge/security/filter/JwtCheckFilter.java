@@ -30,7 +30,6 @@ public class JwtCheckFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         log.info("path : {} ", path);
-        // preflight 요청 - OPTIONS (리퀘스트 사전검증), /api/v1 경로로 오는 요청은 필터를 거치지 않음
         if (request.getMethod().equals("OPTIONS") || path.startsWith("/api/v1/login")
                 || path.startsWith("/api/v1/signup") || path.startsWith("/favicon.ico")
                 || path.startsWith("/ws") || path.startsWith("/api/v1/refresh") || path.startsWith("/api/v1/admin")) {
@@ -56,7 +55,7 @@ public class JwtCheckFilter extends OncePerRequestFilter {
             String name = (String) claims.get("memberName");
             String password = (String) claims.get("password");
             log.warn("password : {}", password);
-            Boolean isWithdraw = ((Boolean) claims.get("isWithdraw")); // Boolean.parseBoolean() 이용하면 코드 간소화 가능
+            Boolean isWithdraw = ((Boolean) claims.get("isWithdraw"));
             log.warn("isWithdraw : {}", isWithdraw);
 
             MemberRole role = MemberRole.valueOf((String) claims.get("role"));
